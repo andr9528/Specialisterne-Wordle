@@ -1,0 +1,20 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Wordle.Uno.Tests/Wordle.Uno.Tests.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Project Path="Wordle.Abstraction/Wordle.Abstraction.csproj" Id="82c26996-e9ae-4df3-9c39-e933a08162e2" />
+  <Project Path="Wordle.Model/Wordle.Model.csproj" Id="c3bf0772-6cdc-4d16-86fd-9d252ffd9ca5" />
+  <Project Path="Wordle.Persistence/Wordle.Persistence.csproj" Id="265c9c0c-eb13-46f2-acfb-ce9a8bfe060e" />
+  <Project Path="Wordle.Uno/Wordle.Uno.csproj">
+    <Deploy />
+  </Project>
+</Solution>
