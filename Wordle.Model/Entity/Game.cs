@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Wordle.Abstraction.Enums;
 using Wordle.Abstraction.Interfaces.Model.Entity;
 using Wordle.Abstraction.Interfaces.Model.Searchable;
@@ -6,8 +7,15 @@ namespace Wordle.Model.Entity;
 
 public class Game : IGame
 {
+    private readonly int id;
+
     /// <inheritdoc />
-    public int Id { get; set; }
+    public int Id
+    {
+        get => id;
+        set => throw new InvalidOperationException(
+            $"{nameof(Id)} cannot be changed after creation of {nameof(Game)} entity");
+    }
 
     /// <inheritdoc />
     public int WordId { get; set; }
@@ -32,4 +40,23 @@ public class Game : IGame
 
     /// <inheritdoc />
     public ICollection<IGuess> Guesses { get; set; }
+
+    public Game()
+    {
+        
+    }
+
+    /// <summary>
+    ///     Constructor for Entity Framework Core to use.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="word"></param>
+    /// <param name="guesses"></param>
+    [JsonConstructor]
+    private Game(int id, Word word, List<Guess> guesses)
+    {
+        this.id = id;
+        Word = word;
+        Guesses = guesses.Cast<IGuess>().ToList();
+    }
 }
