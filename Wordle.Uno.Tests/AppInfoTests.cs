@@ -1,4 +1,5 @@
 using Wordle.Model;
+using Wordle.Model.Uno;
 
 namespace Wordle.Uno.Tests;
 
