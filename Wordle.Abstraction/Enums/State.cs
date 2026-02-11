@@ -5,5 +5,6 @@ public enum State
     UNKNOWN,
     ABANDONED,
     ONGOING,
-    COMPLETED,
+    WON,
+    LOST,
 }
