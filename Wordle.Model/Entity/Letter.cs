@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Wordle.Abstraction.Enums;
 using Wordle.Abstraction.Interfaces.Model.Entity;
 
 namespace Wordle.Model.Entity;
@@ -25,6 +26,9 @@ public class Letter : ILetter
     public int Position { get; set; }
 
     /// <inheritdoc />
+    public CharacterState CharacterState { get; set; }
+
+    /// <inheritdoc />
     public byte[] Version { get; set; }
 
     /// <inheritdoc />
@@ -32,12 +36,6 @@ public class Letter : ILetter
 
     /// <inheritdoc />
     public DateTime UpdatedDateTime { get; set; }
-
-    /// <inheritdoc />
-    public bool IncludedInWord { get; set; }
-
-    /// <inheritdoc />
-    public bool CorrectPosition { get; set; }
 
     /// <inheritdoc />
     public IWord Word { get; set; }

@@ -1,6 +1,6 @@
+using Wordle.Abstraction.Enums;
 using Wordle.Abstraction.Interfaces.Model.Entity;
 using Wordle.Abstraction.Services;
-using Wordle.Extensions;
 using Wordle.Model.Entity;
 
 namespace Wordle.Services;
@@ -47,8 +47,7 @@ public abstract class BaseWordService : IWordService
         return text.Select((x, pos) => new Letter() {
             Content = x,
             Position = pos,
-            IncludedInWord = true, 
-            CorrectPosition = true,
+            CharacterState = CharacterState.PRESENT,
         }).Cast<ILetter>().ToList();
     }
 }

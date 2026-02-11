@@ -35,10 +35,10 @@ public class GameService : IGameService
         _currentGame.Guesses.Add(guess);
         _currentGame.AttemptsLeft--;
 
-        if (guess.Word.Letters.All(x => x.CorrectPosition))
-            _currentGame.State = State.WON;
+        if (guess.Word.Letters.All(x => x.CharacterState == CharacterState.CORRECT))
+            _currentGame.GameState = GameState.WON;
         else if (_currentGame.AttemptsLeft <= 0)
-            _currentGame.State = State.LOST;
+            _currentGame.GameState = GameState.LOST;
 
         await gameQueryService.UpdateEntity(_currentGame);
 
@@ -47,7 +47,7 @@ public class GameService : IGameService
 
     private async Task AbandonCurrentGame()
     {
-        _currentGame!.State = State.ABANDONED;
+        _currentGame!.GameState = GameState.ABANDONED;
         gameQueryService.UpdateEntity(_currentGame!);
 
         await StartFreshGame();
@@ -56,6 +56,6 @@ public class GameService : IGameService
     private async Task StartFreshGame()
     {
         var word = await wordService.GetRandomWord();
-        _currentGame = new Game() {Word = word, AttemptsLeft = 6, State = State.ONGOING};
+        _currentGame = new Game() {Word = word, AttemptsLeft = 6, GameState = GameState.ONGOING};
     }
 }

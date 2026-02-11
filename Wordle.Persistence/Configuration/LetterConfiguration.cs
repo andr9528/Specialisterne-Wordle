@@ -14,5 +14,8 @@ public class LetterConfiguration : EntityConfiguration<Letter>
 
         builder.HasOne(x => (Word) x.Word).WithMany(x => (ICollection<Letter>) x.Letters).HasForeignKey(x => x.WordId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Property(x => x.CharacterState).HasConversion<string>();
+
     }
 }

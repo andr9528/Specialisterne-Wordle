@@ -14,5 +14,7 @@ public class GameConfiguration : EntityConfiguration<Game>
 
         builder.HasOne(x => (Word) x.Word).WithOne().HasForeignKey<Game>(x => x.WordId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Property(x => x.GameState).HasConversion<string>();
     }
 }

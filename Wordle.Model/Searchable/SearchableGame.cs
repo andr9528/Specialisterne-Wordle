@@ -12,7 +12,7 @@ public class SearchableGame : ISearchableGame
     public int WordId { get; set; }
 
     /// <inheritdoc />
-    public State State { get; set; }
+    public GameState GameState { get; set; }
 
     /// <inheritdoc />
     public int AttemptsLeft { get; set; }

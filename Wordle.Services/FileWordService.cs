@@ -1,6 +1,5 @@
 using Wordle.Abstraction.Interfaces.Model.Entity;
 using Wordle.Abstraction.Services;
-using Wordle.Extensions;
 using Wordle.Model.Entity;
 
 namespace Wordle.Services;

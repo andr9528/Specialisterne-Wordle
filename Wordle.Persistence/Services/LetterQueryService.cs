@@ -1,3 +1,4 @@
+using Wordle.Abstraction.Enums;
 using Wordle.Model.Entity;
 using Wordle.Model.Searchable;
 using Wordle.Persistence.Core;
@@ -33,6 +34,11 @@ public class LetterQueryService : BaseEntityQueryService<WordleDatabaseContext, 
         if (searchable.WordId != 0)
         {
             query = query.Where(x => x.WordId == searchable.WordId);
+        }
+
+        if (!Equals(searchable.CharacterState, default(Abstraction.Enums.CharacterState)))
+        {
+            query = query.Where(x => x.CharacterState == searchable.CharacterState);
         }
 
         return query;

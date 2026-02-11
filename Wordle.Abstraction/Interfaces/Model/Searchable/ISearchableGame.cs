@@ -6,6 +6,6 @@ namespace Wordle.Abstraction.Interfaces.Model.Searchable;
 public interface ISearchableGame : ISearchable
 {
     public int WordId { get; set; }
-    public State State { get; set; }
+    public GameState GameState { get; set; }
     public int AttemptsLeft { get; set; }
 }

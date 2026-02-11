@@ -1,3 +1,4 @@
+using Wordle.Abstraction.Enums;
 using Wordle.Abstraction.Interfaces.Model.Entity;
 using Wordle.Abstraction.Interfaces.Persistence;
 using Wordle.Abstraction.Services;
@@ -37,12 +38,12 @@ public class GuessService : IGuessService
             var secretLetter = secretLetters[i];
             var guessedLetter = guessedWord[i];
 
-            var letter = new Letter() {Content = guessedLetter, Position = i,};
+            var letter = new Letter() {Content = guessedLetter, Position = i, CharacterState = CharacterState.ABSENT,};
 
             if (secretLetters.Select(x => x.Content).Contains(guessedLetter))
-                letter.IncludedInWord = true;
+                letter.CharacterState = CharacterState.PRESENT;
             if (secretLetter.Content == guessedLetter)
-                letter.CorrectPosition = true;
+                letter.CharacterState = CharacterState.CORRECT;
 
             letters.Add(letter);
         }

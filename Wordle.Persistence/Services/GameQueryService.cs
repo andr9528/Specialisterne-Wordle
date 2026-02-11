@@ -30,9 +30,9 @@ public class GameQueryService : BaseEntityQueryService<WordleDatabaseContext, Ga
             query = query.Where(x => x.AttemptsLeft == searchable.AttemptsLeft);
         }
 
-        if (!Equals(searchable.State, default(Abstraction.Enums.State)))
+        if (!Equals(searchable.GameState, default(Abstraction.Enums.GameState)))
         {
-            query = query.Where(x => x.State == searchable.State);
+            query = query.Where(x => x.GameState == searchable.GameState);
         }
 
         return query;
