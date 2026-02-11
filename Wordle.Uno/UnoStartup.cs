@@ -7,6 +7,9 @@ using Wordle.Model.Uno;
 using Wordle.Persistence;
 using Wordle.Persistence.Services;
 using Wordle.Services;
+using Wordle.Uno.Abstraction;
+using Wordle.Uno.NavigationRegion;
+using Wordle.Uno.Presentation.Region;
 using Wordle.Uno.Startup;
 using Wordle.Uno.Startup.Module;
 using Path = System.IO.Path;
@@ -43,6 +46,9 @@ public class UnoStartup : ModularStartup
         services.AddSingleton<IGameService, GameService>();
         services.AddScoped<IGuessService, GuessService>();
         services.AddScoped<IWordService, FileWordService>();
+
+        services.AddSingleton<IPageRegion, GamePageRegionDefinition>();
+        services.AddSingleton<IPageRegion, HistoryPageRegionDefinition>();
     }
 
     /// <inheritdoc />

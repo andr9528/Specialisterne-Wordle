@@ -49,5 +49,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="NavigationRegion\" />
+    <Folder Include="Presentation\Region\" />
+  </ItemGroup>
 
 </Project>

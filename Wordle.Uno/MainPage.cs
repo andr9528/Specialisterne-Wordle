@@ -1,17 +1,36 @@
+using Wordle.Uno.Extensions;
+using Wordle.Uno.Presentation;
+using Wordle.Uno.Presentation.Factory;
+
 namespace Wordle.Uno;
 
 public sealed partial class MainPage : Page
 {
     public MainPage()
     {
-        this
-            .Background(Theme.Brushes.Background.Default)
-            .Content(new StackPanel()
-            .VerticalAlignment(VerticalAlignment.Center)
-            .HorizontalAlignment(HorizontalAlignment.Center)
-            .Children(
-                new TextBlock()
-                    .Text("Hello Uno Platform!")
-            ));
+        Background = new SolidColorBrush(Colors.LightGray);
+
+        Grid contentGrid = CreateGrid();
+        AddElementsToGrid(contentGrid);
+
+        Content = contentGrid;
+    }
+
+    private void AddElementsToGrid(Grid contentGrid)
+    {
+        var selector = ActivatorUtilities.CreateInstance<PageSelector>(App.Startup.ServiceProvider);
+
+        contentGrid.Children.Add(selector.SetRow(0).SetColumn(0));
+    }
+
+    private Grid CreateGrid()
+    {
+        Grid grid = GridFactory.CreateDefaultGrid();
+        grid.Margin(new Thickness(0));
+
+        grid.DefineRows(sizes: [100,]);
+        grid.DefineColumns(sizes: [100,]);
+
+        return grid;
     }
 }
