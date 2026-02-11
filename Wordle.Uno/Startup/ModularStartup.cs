@@ -1,4 +1,6 @@
 using System.Reflection;
+using Wordle.Abstraction.Services;
+using Wordle.Services;
 using Wordle.Uno.Startup.Core;
 
 namespace Wordle.Uno.Startup;
@@ -21,8 +23,8 @@ public class ModularStartup : IStartupModule
     }
 
     /// <inheritdoc />
-    public virtual void ConfigureServices(IServiceCollection services)
-    {
+    public virtual void ConfigureServices(IServiceCollection services) {
+
     }
 
     protected void AddModule(IStartupModule module)
@@ -39,7 +41,6 @@ public class ModularStartup : IStartupModule
         {
             module.ConfigureServices(Services);
         }
-
 
         ServiceProvider = Services.BuildServiceProvider();
     }

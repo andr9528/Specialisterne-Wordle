@@ -1,10 +1,12 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Wordle.Abstraction.Services;
 using Wordle.Model.Entity;
 using Wordle.Model.Searchable;
 using Wordle.Model.Uno;
 using Wordle.Persistence;
 using Wordle.Persistence.Services;
+using Wordle.Services;
 using Wordle.Uno.Startup;
 using Wordle.Uno.Startup.Module;
 using Path = System.IO.Path;
@@ -14,7 +16,7 @@ namespace Wordle.Uno;
 public class UnoStartup : ModularStartup
 {
     private const string CONNECTION_STRING = "Database.db";
-    private const string LOG_FILE = "Storage/wordle.log";
+    private const string LOG_FILE = "Assets/wordle.log";
     private const string APP_SETTINGS_FILE = "appsettings.json";
 
     public UnoStartup()
@@ -37,6 +39,10 @@ public class UnoStartup : ModularStartup
     public override void ConfigureServices(IServiceCollection services)
     {
         base.ConfigureServices(services);
+
+        services.AddSingleton<IGameService, GameService>();
+        services.AddScoped<IGuessService, GuessService>();
+        services.AddScoped<IWordService, FileWordService>();
     }
 
     /// <inheritdoc />

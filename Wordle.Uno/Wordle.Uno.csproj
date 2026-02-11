@@ -42,6 +42,12 @@
   <ItemGroup>
     <ProjectReference Include="..\Wordle.Model\Wordle.Model.csproj" />
     <ProjectReference Include="..\Wordle.Persistence\Wordle.Persistence.csproj" />
+    <ProjectReference Include="..\Wordle.Services\Wordle.Services.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="Assets\wordle_ord.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
