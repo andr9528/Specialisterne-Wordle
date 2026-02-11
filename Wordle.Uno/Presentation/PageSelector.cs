@@ -19,16 +19,30 @@ public sealed partial class PageSelector : NavigationView
         IsSettingsVisible = false;
 
         PaneDisplayMode = NavigationViewPaneDisplayMode.LeftCompact;
-        CompactPaneLength = 200;
+        CompactPaneLength = 160;
 
         var regions = CreateMenuList(regionDefinitions ?? throw new ArgumentNullException(nameof(regionDefinitions)));
-        PaneCustomContent = menuList;
+        PaneCustomContent = CreatePaneCustomContentGrid();
+        PaneBackground = new SolidColorBrush(Color.FromArgb(255, 32, 32, 32));
 
-        // Default selection
         if (regions.Any())
         {
             menuList.SelectedIndex = 0;
         }
+    }
+
+    private Grid CreatePaneCustomContentGrid()
+    {
+        var paneRoot = new Grid
+        {
+            Background = new SolidColorBrush(Color.FromArgb(255, 32, 32, 32)),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Stretch,
+        };
+
+        paneRoot.Children.Add(menuList);
+
+        return paneRoot;
     }
 
     private List<IPageRegion> CreateMenuList(IEnumerable<IPageRegion> regionDefinitions)
@@ -37,12 +51,14 @@ public sealed partial class PageSelector : NavigationView
 
         menuList = new ListView
         {
-            Background = new SolidColorBrush(Color.FromArgb(255, 32, 32, 32)),
+            Background = new SolidColorBrush(Colors.Transparent), // <-- important
             SelectionMode = ListViewSelectionMode.Single,
             ItemsSource = regions,
             ItemTemplate = CreateMenuItemTemplate(),
             ItemContainerStyle = CreateMenuItemStyle(),
-            Margin = new Thickness(10),
+            Margin = new Thickness(10), // keep inner padding if you want
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Stretch,
         };
 
         menuList.SelectionChanged += MenuList_SelectionChanged;
