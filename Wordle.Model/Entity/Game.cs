@@ -39,7 +39,10 @@ public class Game : IGame
     public IWord Word { get; set; }
 
     /// <inheritdoc />
-    public ICollection<IGuess> Guesses { get; set; }
+    public ICollection<IGuess> Guesses { get; set; } = new List<IGuess>();
+
+    /// <inheritdoc />
+    public ICollection<ILetter> Letters { get; set; } = new List<ILetter>();
 
     public Game()
     {
@@ -58,5 +61,6 @@ public class Game : IGame
         this.id = id;
         Word = word;
         Guesses = guesses.Cast<IGuess>().ToList();
+        Letters = new List<ILetter>();
     }
 }

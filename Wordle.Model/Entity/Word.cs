@@ -28,7 +28,7 @@ public class Word : IWord
     public DateTime UpdatedDateTime { get; set; }
 
     /// <inheritdoc />
-    public ICollection<ILetter> Letters { get; set; }
+    public ICollection<ILetter> Letters { get; set; } = new List<ILetter>();
 
     public Word()
     {
