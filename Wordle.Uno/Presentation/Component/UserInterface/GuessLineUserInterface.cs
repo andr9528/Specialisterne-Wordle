@@ -23,9 +23,9 @@ public sealed class GuessLineUserInterface
             HorizontalAlignment = HorizontalAlignment.Center,
         };
 
-        foreach (var vm in viewModel.Characters)
+        for (int i = 0; i < viewModel.WordLength; i++)
         {
-            var tile = new CharacterIndicator(vm)
+            var tile = new CharacterIndicator(new CharacterIndicatorViewModel(viewModel.GuessNumber, i))
             {
                 Width = 44,
                 Height = 44,

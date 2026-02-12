@@ -1,13 +1,16 @@
 using System.Collections.ObjectModel;
+using Wordle.Uno.Presentation.Core;
 
 namespace Wordle.Uno.Presentation.Component.ViewModel;
 
-public sealed class GuessScrollViewViewModel
+public sealed partial class GuessScrollViewViewModel : BaseViewModel
 {
-    public GuessScrollViewViewModel()
-    {
-        Guesses = new ObservableCollection<GuessLineViewModel>();
-    }
+    public int MaxGuesses { get; }
+    public int WordLength { get; }
 
-    public ObservableCollection<GuessLineViewModel> Guesses { get; }
+    public GuessScrollViewViewModel(int maxGuesses, int wordLength)
+    {
+        MaxGuesses = maxGuesses;
+        WordLength = wordLength;
+    }
 }

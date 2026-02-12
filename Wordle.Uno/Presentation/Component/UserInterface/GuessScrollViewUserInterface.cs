@@ -18,11 +18,9 @@ public sealed class GuessScrollViewUserInterface
     {
         var stack = new StackPanel { Spacing = 8 };
 
-        // NOTE: For now we just build once from the collection.
-        // TODO: Replace with ItemsRepeater/ListView binding later.
-        foreach (var guessVm in viewModel.Guesses)
+        for (int i = 0; i < viewModel.MaxGuesses; i++)
         {
-            stack.Children.Add(new GuessLine(guessVm));
+            stack.Children.Add(new GuessLine(new GuessLineViewModel(i +1, viewModel.WordLength)));
         }
 
         return new ScrollViewer

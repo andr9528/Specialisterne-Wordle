@@ -17,8 +17,6 @@ public sealed class InformationBarUserInterface
     public UIElement CreateContent()
     {
         var grid = new Grid();
-        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
         var message = new TextBlock
         {
@@ -27,21 +25,11 @@ public sealed class InformationBarUserInterface
         };
         message.SetBinding(TextBlock.TextProperty, new Binding
         {
-            Path = nameof(viewModel.Message),
+            Path = nameof(viewModel.AttemptsLeftMessage),
             Mode = BindingMode.OneWay,
         });
 
-        var attempts = new TextBlock
-        {
-            VerticalAlignment = VerticalAlignment.Center,
-            Margin = new Thickness(12, 0, 0, 0),
-        };
-        // TODO: Replace with a proper MultiBinding/Converter later if desired.
-        attempts.Text = "Attempts";
-
         grid.Children.Add(message);
-        grid.Children.Add(attempts);
-        Grid.SetColumn(attempts, 1);
 
         return grid;
     }

@@ -1,19 +1,17 @@
 using System.Collections.ObjectModel;
+using Wordle.Uno.Presentation.Core;
 
 namespace Wordle.Uno.Presentation.Component.ViewModel;
 
-public sealed class GuessLineViewModel
+public sealed partial class GuessLineViewModel : BaseViewModel
 {
-    public GuessLineViewModel(int wordLength)
-    {
-        if (wordLength <= 0) throw new ArgumentOutOfRangeException(nameof(wordLength));
+    public int GuessNumber { get; }
+    public int WordLength { get; }
 
-        Characters = new ObservableCollection<CharacterIndicatorViewModel>();
-        for (int i = 0; i < wordLength; i++)
-        {
-            Characters.Add(new CharacterIndicatorViewModel());
-        }
+    public GuessLineViewModel(int guessNumber, int wordLength)
+    {
+        GuessNumber = guessNumber;
+        WordLength = wordLength;
     }
 
-    public ObservableCollection<CharacterIndicatorViewModel> Characters { get; }
 }

@@ -1,6 +1,7 @@
 using Windows.UI.Text;
 using Wordle.Uno.Presentation.Component.Logic;
 using Wordle.Uno.Presentation.Component.ViewModel;
+using Wordle.Uno.Presentation.Converter;
 
 namespace Wordle.Uno.Presentation.Component.UserInterface;
 
@@ -8,14 +9,28 @@ public sealed class CharacterIndicatorUserInterface
 {
     private readonly CharacterIndicatorLogic logic;
     private readonly CharacterIndicatorViewModel viewModel;
+    private readonly Border host;
 
-    public CharacterIndicatorUserInterface(CharacterIndicatorLogic logic, CharacterIndicatorViewModel viewModel)
+    public CharacterIndicatorUserInterface(CharacterIndicatorLogic logic, CharacterIndicatorViewModel viewModel,
+        Border host)
     {
         this.logic = logic ?? throw new ArgumentNullException(nameof(logic));
         this.viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+        this.host = host ?? throw new ArgumentNullException(nameof(host));
     }
 
     public UIElement CreateContent()
+    {
+        SetHostBindings();
+        TextBlock text = BuildContentTextBlock();
+
+        return new Grid
+        {
+            Children = { text }
+        };
+    }
+
+    private TextBlock BuildContentTextBlock()
     {
         var text = new TextBlock
         {
@@ -31,27 +46,16 @@ public sealed class CharacterIndicatorUserInterface
             Mode = BindingMode.OneWay,
             Converter = new NullableCharToStringConverter(),
         });
-
-        return new Grid
-        {
-            Children = { text }
-        };
+        return text;
     }
 
-    private sealed class NullableCharToStringConverter : IValueConverter
+    private void SetHostBindings()
     {
-        public object Convert(object value, Type targetType, object parameter, string language)
-            => value is char c ? c.ToString() : string.Empty;
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        host.SetBinding(Border.BackgroundProperty, new Binding
         {
-            var s = value as string;
-            if (string.IsNullOrWhiteSpace(s))
-            {
-                return null!;
-            }
-
-            return s.Trim()[0];
-        }
+            Path = new PropertyPath(nameof(CharacterIndicatorViewModel.State)),
+            Mode = BindingMode.OneWay,
+            Converter = new CharacterStateToBrushConverter(),
+        });
     }
 }

@@ -1,14 +1,24 @@
+using Wordle.Abstraction.Interfaces.Model.Entity;
+using Wordle.Uno.Presentation.Core;
+
 namespace Wordle.Uno.Presentation.Component.ViewModel;
 
-public sealed class InformationBarViewModel
+public sealed partial class InformationBarViewModel : BaseViewModel
 {
+    private const string ATTEMPTS_LEFT = "Attempts Left: "; 
+
     public InformationBarViewModel()
     {
+        attemptsLeftMessage = ATTEMPTS_LEFT + "Unknown";
     }
 
-    public string Message { get; set; } = string.Empty;
+    [ObservableProperty] private string? attemptsLeftMessage;
 
-    public int AttemptsUsed { get; set; }
+    /// <inheritdoc />
+    protected override void OnGameChanged(IGame game)
+    {
+        base.OnGameChanged(game);
 
-    public int MaxAttempts { get; set; } = 6;
+        attemptsLeftMessage = ATTEMPTS_LEFT + game.AttemptsLeft;
+    }
 }
