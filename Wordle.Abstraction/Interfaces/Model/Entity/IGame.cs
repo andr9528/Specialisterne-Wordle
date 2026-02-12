@@ -7,4 +7,5 @@ public interface IGame : ISearchableGame, IEntity
 {
     IWord Word { get; set; }
     ICollection<IGuess> Guesses { get; set; }
+    ICollection<ILetter> Letters { get; set; }
 }

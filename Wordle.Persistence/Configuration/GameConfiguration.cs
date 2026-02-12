@@ -16,5 +16,7 @@ public class GameConfiguration : EntityConfiguration<Game>
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Property(x => x.GameState).HasConversion<string>();
+
+        builder.Ignore(x => x.Letters);
     }
 }

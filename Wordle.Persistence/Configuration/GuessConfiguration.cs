@@ -12,11 +12,9 @@ public class GuessConfiguration : EntityConfiguration<Guess>
     {
         base.Configure(builder);
 
-        // Guess -> Game (many guesses per game)
         builder.HasOne(x => (Game) x.Game).WithMany(x => (ICollection<Guess>) x.Guesses).HasForeignKey(x => x.GameId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Guess -> Word (many guesses can reference same word)
         builder.HasOne(x => (Word) x.Word).WithMany().HasForeignKey(x => x.WordId)
             .OnDelete(DeleteBehavior.Restrict);
     }
