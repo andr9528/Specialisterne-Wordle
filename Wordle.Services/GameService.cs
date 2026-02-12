@@ -25,7 +25,7 @@ public class GameService : IGameService
 
     public Task StartNewGame()
     {
-        return _currentGame != null ? StartFreshGame() : AbandonCurrentGame();
+        return _currentGame == null ? StartFreshGame() : AbandonCurrentGame();
     }
 
     /// <inheritdoc />
