@@ -1,3 +1,5 @@
+using Wordle.Abstraction.Interfaces.Model.Entity;
+
 namespace Wordle.Abstraction.Services;
 
 public interface IGameService
@@ -13,4 +15,6 @@ public interface IGameService
     /// <param name="guessedWord"></param>
     /// <returns>True if it is a valid guess, false otherwise</returns>
     public Task<bool> ProcessGuess(string guessedWord);
+
+    public Task Initialize();
 }
