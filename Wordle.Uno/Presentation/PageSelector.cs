@@ -23,7 +23,6 @@ public sealed partial class PageSelector : NavigationView
 
         var regions = CreateMenuList(regionDefinitions ?? throw new ArgumentNullException(nameof(regionDefinitions)));
         PaneCustomContent = CreatePaneCustomContentGrid();
-        PaneBackground = new SolidColorBrush(Color.FromArgb(255, 32, 32, 32));
 
         if (regions.Any())
         {

@@ -1,4 +1,7 @@
 using Windows.UI.Text;
+using Wordle.Uno.Extensions;
+using Wordle.Uno.Presentation.Component;
+using Wordle.Uno.Presentation.Component.ViewModel;
 using Wordle.Uno.Presentation.Region.Logic;
 using Wordle.Uno.Presentation.Region.ViewModel;
 
@@ -8,6 +11,7 @@ public sealed class GamePageRegionUserInterface
 {
     private readonly GamePageRegionLogic logic;
     private readonly GamePageRegionViewModel viewModel;
+    private Grid guessHost;
 
     public GamePageRegionUserInterface(GamePageRegionLogic logic, GamePageRegionViewModel viewModel)
     {
@@ -17,10 +21,6 @@ public sealed class GamePageRegionUserInterface
 
     public UIElement CreateContent()
     {
-        // Placeholder layout. Replace with your real composition:
-        // - InformationBar
-        // - GuessScrollView (guess lines)
-        // - Keyboard
         var grid = new Grid
         {
             Padding = new Thickness(16),
@@ -31,35 +31,25 @@ public sealed class GamePageRegionUserInterface
         grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-        var header = new TextBlock
-        {
-            Text = "Game (TODO)",
-            FontSize = 20,
-            FontWeight = new FontWeight(4),
-        };
+        var informationBar = new InformationBar(new InformationBarViewModel()).SetRow(0);
+        guessHost = new Grid().SetRow(1);
+        var keyboard = new Keyboard(new KeyboardViewModel());
 
-        var body = new TextBlock
-        {
-            Text = "TODO: Add game UI here (guess grid + keyboard).",
-            TextWrapping = TextWrapping.Wrap,
-            VerticalAlignment = VerticalAlignment.Center,
-        };
+        RecreateGuessScrollView();
 
-        var footer = new TextBlock
-        {
-            Text = "TODO: Status / info bar area.",
-            Opacity = 0.8,
-        };
+        logic.BindGuessScrollViewRecreation(RecreateGuessScrollView);
+        guessHost.Unloaded += (_, __) => logic.UnbindGuessScrollViewRecreation();
 
-        grid.Children.Add(header);
-        Grid.SetRow(header, 0);
-
-        grid.Children.Add(body);
-        Grid.SetRow(body, 1);
-
-        grid.Children.Add(footer);
-        Grid.SetRow(footer, 2);
+        grid.Children.Add(informationBar);
+        grid.Children.Add(guessHost);
+        grid.Children.Add(keyboard);
 
         return grid;
+    }
+
+    private void RecreateGuessScrollView()
+    {
+        guessHost.Children.Clear();
+        guessHost.Children.Add(new GuessScrollView(viewModel.GuessScrollViewViewModel));
     }
 }

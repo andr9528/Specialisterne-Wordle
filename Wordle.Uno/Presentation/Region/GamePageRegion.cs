@@ -1,3 +1,4 @@
+using Wordle.Abstraction.Services;
 using Wordle.Uno.Presentation.Region.Logic;
 using Wordle.Uno.Presentation.Region.UserInterface;
 using Wordle.Uno.Presentation.Region.ViewModel;
@@ -10,9 +11,11 @@ public sealed class GamePageRegion : Border
     {
         DataContext = new GamePageRegionViewModel();
 
+        var gameService = App.Startup.ServiceProvider.GetService<IGameService>() ?? throw new ArgumentNullException(nameof(IGameService));
+
         Logic = new GamePageRegionLogic(
             this,
-            (GamePageRegionViewModel) DataContext);
+            (GamePageRegionViewModel) DataContext, gameService);
 
         var ui = new GamePageRegionUserInterface(
             Logic,
