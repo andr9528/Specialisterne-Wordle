@@ -5,11 +5,11 @@ using Wordle.Abstraction.Interfaces.Persistence;
 
 namespace Wordle.Persistence.Core;
 
-public abstract class BaseDatabaseContext : DbContext
+public abstract class BaseDatabaseContext<TContext> : DbContext where TContext : DbContext
 {
     private readonly DbContextOptions options;
 
-    protected BaseDatabaseContext([NotNull] DbContextOptions options) : base(options)
+    protected BaseDatabaseContext([NotNull] DbContextOptions<TContext> options) : base(options)
     {
         this.options = options;
     }

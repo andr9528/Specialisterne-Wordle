@@ -4,7 +4,7 @@ using Wordle.Uno.Startup.Core;
 
 namespace Wordle.Uno.Startup.Module;
 
-public class DatabaseContextStartupModule<TContext> : IStartupModule where TContext : BaseDatabaseContext
+public class DatabaseContextStartupModule<TContext> : IStartupModule where TContext : BaseDatabaseContext<TContext>
 {
     public delegate void SetupOptionsDelegate(DbContextOptionsBuilder options);
 

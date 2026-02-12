@@ -18,14 +18,13 @@ namespace Wordle.Uno;
 
 public class UnoStartup : ModularStartup
 {
-    private const string CONNECTION_STRING = "Database.db";
     private const string LOG_FILE = "Assets/wordle.log";
     private const string APP_SETTINGS_FILE = "appsettings.json";
 
     public UnoStartup()
     {
         string basePath = AppContext.BaseDirectory;
-        string dbPath = Path.Combine(basePath, CONNECTION_STRING);
+        string dbPath = Path.Combine(basePath, WordleDatabaseContext.CONNECTION_STRING);
 
         AddModule(new DatabaseContextStartupModule<WordleDatabaseContext>(options =>
             options.UseSqlite($"Data Source={dbPath}")));

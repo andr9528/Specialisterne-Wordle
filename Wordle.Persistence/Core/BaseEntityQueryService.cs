@@ -4,7 +4,7 @@ using Wordle.Abstraction.Interfaces.Persistence;
 namespace Wordle.Persistence.Core;
 
 public abstract class BaseEntityQueryService<TContext, TEntity, TSearchable> : IEntityQueryService<TEntity, TSearchable>
-    where TContext : BaseDatabaseContext where TEntity : class, IEntity where TSearchable : class, ISearchable, new()
+    where TContext : BaseDatabaseContext<TContext> where TEntity : class, IEntity where TSearchable : class, ISearchable, new()
 {
     protected readonly TContext context;
 

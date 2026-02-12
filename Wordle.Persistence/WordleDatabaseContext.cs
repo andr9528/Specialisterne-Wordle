@@ -5,10 +5,12 @@ using Wordle.Persistence.Core;
 
 namespace Wordle.Persistence;
 
-public class WordleDatabaseContext : BaseDatabaseContext
+public class WordleDatabaseContext : BaseDatabaseContext<WordleDatabaseContext>
 {
+    public const string CONNECTION_STRING = "Database.db";
+
     /// <inheritdoc />
-    public WordleDatabaseContext(DbContextOptions options) : base(options)
+    public WordleDatabaseContext(DbContextOptions<WordleDatabaseContext> options) : base(options)
     {
     }
 
