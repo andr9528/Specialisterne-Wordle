@@ -16,22 +16,17 @@ public class GuessService : IGuessService
     }
 
     /// <inheritdoc />
-    public IGuess ProcessGuess(IGame currentGame, string guessedWord)
+    public IGuess ProcessGuess(IWord currentGameWord, string guessedWord, int currentGuessCount)
     {
-        if (currentGame is not Game game)
-            throw new ArgumentException(
-                $"Expected {nameof(currentGame)} to be a {nameof(Game)} but was {currentGame.GetType().Name}.",
-                nameof(currentGame));
-
-        var letters = BuildLetters(guessedWord, game);
+        var letters = BuildLetters(guessedWord, currentGameWord);
         var word = new Word() {Content = guessedWord, Letters = letters.Cast<ILetter>().ToList()};
-        return new Guess() {Word = word, Number = currentGame.Guesses.Count + 1,};
+        return new Guess() {Word = word, Number = currentGuessCount + 1,};
     }
 
-    private List<Letter> BuildLetters(string guessedWord, Game game)
+    private List<Letter> BuildLetters(string guessedWord, IWord word)
     {
         var letters = new List<Letter>();
-        var secretLetters = game.Word.Letters.ToList();
+        var secretLetters = word.Letters.ToList();
 
         for (int i = 0; i < secretLetters.Count; i++)
         {
