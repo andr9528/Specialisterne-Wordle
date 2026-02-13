@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.UI.Dispatching;
 using Wordle.Abstraction.Services;
 using Wordle.Model.Entity;
 using Wordle.Model.Searchable;
@@ -9,6 +10,8 @@ using Wordle.Persistence.Services;
 using Wordle.Services;
 using Wordle.Uno.Abstraction;
 using Wordle.Uno.NavigationRegion;
+using Wordle.Uno.Presentation.Core;
+using Wordle.Uno.Presentation.Factory;
 using Wordle.Uno.Presentation.Region;
 using Wordle.Uno.Startup;
 using Wordle.Uno.Startup.Module;
@@ -25,6 +28,8 @@ public class UnoStartup : ModularStartup
     {
         string basePath = AppContext.BaseDirectory;
         string dbPath = Path.Combine(basePath, WordleDatabaseContext.CONNECTION_STRING);
+
+        AddModule(new LoggingStartupModule(LOG_FILE));
 
         AddModule(new DatabaseContextStartupModule<WordleDatabaseContext>(options =>
             options.UseSqlite($"Data Source={dbPath}")));
@@ -46,6 +51,10 @@ public class UnoStartup : ModularStartup
         services.AddScoped<IGuessService, GuessService>();
         services.AddScoped<IWordService, FileWordService>();
 
+        var uiDispatcherQueue = DispatcherQueue.GetForCurrentThread();
+        services.AddSingleton<IUiDispatcher>(new UiDispatcher(uiDispatcherQueue));
+        services.AddSingleton<IViewModelFactory, ViewModelFactory>();
+
         services.AddSingleton<IPageRegion, GamePageRegionDefinition>();
         services.AddSingleton<IPageRegion, HistoryPageRegionDefinition>();
     }
@@ -58,7 +67,6 @@ public class UnoStartup : ModularStartup
             // Switch to Development environment when running in DEBUG
             .UseEnvironment(Environments.Development)
 #endif
-            .UseLogging(ConfigureLogging, true).UseSerilog(true, true)
             .UseConfiguration(configure: ConfigureConfigurationSource).UseLocalization(ConfigureLocalization)
             .UseSerialization(ConfigureSerialization));
 
@@ -70,31 +78,6 @@ public class UnoStartup : ModularStartup
     private void ConfigureSerialization(HostBuilderContext host, IServiceCollection services)
     {
         services.AddSingleton(new JsonSerializerOptions { IncludeFields = true, });
-    }
-
-    private void ConfigureLogging(HostBuilderContext context, ILoggingBuilder logBuilder)
-    {
-        logBuilder.SetMinimumLevel(context.HostingEnvironment.IsDevelopment() ? LogLevel.Information : LogLevel.Warning)
-
-            // Default filters for core Uno Platform namespaces
-            .CoreLogLevel(LogLevel.Warning);
-
-        // Uno Platform namespace filter groups
-        // Uncomment individual methods to see more detailed logging
-        //// Generic Xaml events
-        //logBuilder.XamlLogLevel(LogLevel.Debug);
-        //// Layout specific messages
-        //logBuilder.XamlLayoutLogLevel(LogLevel.Debug);
-        //// Storage messages
-        //logBuilder.StorageLogLevel(LogLevel.Debug);
-        //// Binding related messages
-        //logBuilder.XamlBindingLogLevel(LogLevel.Debug);
-        //// Binder memory references tracking
-        //logBuilder.BinderMemoryReferenceLogLevel(LogLevel.Debug);
-        //// DevServer and HotReload related
-        //logBuilder.HotReloadCoreLogLevel(LogLevel.Information);
-        //// Debug JS interop
-        //logBuilder.WebAssemblyLogLevel(LogLevel.Debug);
     }
 
     private IHostBuilder ConfigureConfigurationSource(IConfigBuilder configBuilder)

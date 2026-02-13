@@ -5,14 +5,20 @@ namespace Wordle.Uno.NavigationRegion;
 
 public sealed class GamePageRegionDefinition : IPageRegion
 {
+    private readonly ILogger<GamePageRegionDefinition> logger;
+
+    public GamePageRegionDefinition(ILogger<GamePageRegionDefinition> logger)
+    {
+        this.logger = logger;
+    }
+
     public string DisplayName => "Game";
 
     public IconElement Icon => new SymbolIcon(Symbol.Play);
 
     public UIElement CreateControl(IServiceProvider services)
     {
-        Console.WriteLine($"Changing page to: {nameof(GamePageRegion)}");
-        // Use DI to build the region
+        logger.LogInformation($"Changing page to: {nameof(GamePageRegion)}");
         return ActivatorUtilities.CreateInstance<GamePageRegion>(services);
     }
 }

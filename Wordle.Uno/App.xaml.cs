@@ -36,7 +36,6 @@ public partial class App : Application
         Startup.SetupApplication(builder)
             .Configure(host => host.ConfigureServices(collection => Startup.SetupServices(collection)));
 
-
         MainWindow = builder.Window;
 
 #if DEBUG
