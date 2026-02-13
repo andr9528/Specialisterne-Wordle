@@ -22,6 +22,7 @@ public sealed partial class InformationBarViewModel : BaseViewModel<InformationB
     {
         base.OnGameChanged(game);
 
+        logger.LogDebug("Updating Attempts left to '{GameAttemptsLeft}'.", ATTEMPTS_LEFT + game.AttemptsLeft);
         uiDispatcher.Enqueue(() => attemptsLeftMessage = ATTEMPTS_LEFT + game.AttemptsLeft);
     }
 }
