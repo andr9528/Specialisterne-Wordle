@@ -2,6 +2,7 @@ using Windows.UI.Text;
 using Wordle.Uno.Presentation.Component.Logic;
 using Wordle.Uno.Presentation.Component.ViewModel;
 using Wordle.Uno.Presentation.Converter;
+using Wordle.Uno.Presentation.Factory;
 
 namespace Wordle.Uno.Presentation.Component.UserInterface;
 
@@ -24,10 +25,10 @@ public sealed class CharacterIndicatorUserInterface
         SetHostBindings();
         TextBlock text = BuildContentTextBlock();
 
-        return new Grid
-        {
-            Children = { text }
-        };
+        var grid = GridFactory.CreateDefaultGrid();
+        grid.Children.Add(text);
+
+        return grid;
     }
 
     private TextBlock BuildContentTextBlock()
@@ -44,17 +45,16 @@ public sealed class CharacterIndicatorUserInterface
         {
             Path = nameof(viewModel.Character),
             Mode = BindingMode.OneWay,
-            Converter = new NullableCharToStringConverter(),
         });
         return text;
     }
 
     private void SetHostBindings()
     {
-        host.SetBinding(Border.BackgroundProperty, new Binding
+        host.SetBinding(FrameworkElement.BackgroundProperty, new Binding
         {
             Path = new PropertyPath(nameof(CharacterIndicatorViewModel.State)),
-            Mode = BindingMode.OneWay,
+            Mode = BindingMode.TwoWay,
             Converter = new CharacterStateToBrushConverter(),
         });
     }

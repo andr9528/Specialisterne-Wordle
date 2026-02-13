@@ -1,4 +1,5 @@
 using Wordle.Uno.Abstraction;
+using Wordle.Uno.Presentation.Factory;
 
 namespace Wordle.Uno.Presentation;
 
@@ -32,12 +33,12 @@ public sealed partial class PageSelector : NavigationView
 
     private Grid CreatePaneCustomContentGrid()
     {
-        var paneRoot = new Grid
-        {
-            Background = new SolidColorBrush(Color.FromArgb(255, 32, 32, 32)),
-            HorizontalAlignment = HorizontalAlignment.Stretch,
-            VerticalAlignment = VerticalAlignment.Stretch,
-        };
+        var paneRoot = GridFactory.CreateDefaultGrid();
+
+        paneRoot.Background = new SolidColorBrush(Color.FromArgb(255, 32, 32, 32));
+        paneRoot.HorizontalAlignment = HorizontalAlignment.Stretch;
+        paneRoot.VerticalAlignment = VerticalAlignment.Stretch;
+        paneRoot.Margin = new Thickness(0);
 
         paneRoot.Children.Add(menuList);
 
@@ -50,7 +51,7 @@ public sealed partial class PageSelector : NavigationView
 
         menuList = new ListView
         {
-            Background = new SolidColorBrush(Colors.Transparent), // <-- important
+            Background = new SolidColorBrush(Colors.Transparent),
             SelectionMode = ListViewSelectionMode.Single,
             ItemsSource = regions,
             ItemTemplate = CreateMenuItemTemplate(),

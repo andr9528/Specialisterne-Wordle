@@ -1,5 +1,6 @@
 using Wordle.Uno.Presentation.Component.Logic;
 using Wordle.Uno.Presentation.Component.ViewModel;
+using Wordle.Uno.Presentation.Factory;
 
 namespace Wordle.Uno.Presentation.Component.UserInterface;
 
@@ -16,7 +17,9 @@ public sealed class InformationBarUserInterface
 
     public UIElement CreateContent()
     {
-        var grid = new Grid();
+        var grid = GridFactory.CreateDefaultGrid();
+
+        grid.RowDefinitions.Add(new RowDefinition() {Height = GridLength.Auto});
 
         var message = new TextBlock
         {
@@ -26,7 +29,7 @@ public sealed class InformationBarUserInterface
         message.SetBinding(TextBlock.TextProperty, new Binding
         {
             Path = nameof(viewModel.AttemptsLeftMessage),
-            Mode = BindingMode.OneWay,
+            Mode = BindingMode.TwoWay,
         });
 
         grid.Children.Add(message);

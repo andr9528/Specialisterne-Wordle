@@ -1,5 +1,8 @@
+using Wordle.Uno.Abstraction;
+using Wordle.Uno.Extensions;
 using Wordle.Uno.Presentation.Component.Logic;
 using Wordle.Uno.Presentation.Component.ViewModel;
+using Wordle.Uno.Presentation.Factory;
 
 namespace Wordle.Uno.Presentation.Component.UserInterface;
 
@@ -16,17 +19,24 @@ public sealed class KeyboardUserInterface
 
     public UIElement CreateContent()
     {
-        var root = new StackPanel
-        {
-            Spacing = 8,
-        };
+        var root = GridFactory.CreateDefaultGrid();
 
-        TextBox input = BuildGuessInput();
+        root.RowSpacing = 8;
+
+        root.RowDefinitions.Add(new RowDefinition
+        {
+            Height = GridLength.Auto
+        });
+
+        root.RowDefinitions.Add(new RowDefinition
+        {
+            Height = GridLength.Auto
+        });
+
+        TextBox input = BuildGuessInput().SetRow(0);
+        Grid keyboardGrid = BuildKeyboardGrid().SetRow(1);
 
         root.Children.Add(input);
-
-        Grid keyboardGrid = BuildKeyboardGrid();
-
         root.Children.Add(keyboardGrid);
 
         return root;
@@ -34,11 +44,10 @@ public sealed class KeyboardUserInterface
 
     private Grid BuildKeyboardGrid()
     {
-        var keyboardGrid = new Grid
-        {
-            HorizontalAlignment = HorizontalAlignment.Center,
-            VerticalAlignment = VerticalAlignment.Center,
-        };
+        var keyboardGrid = GridFactory.CreateDefaultGrid();
+
+        keyboardGrid.HorizontalAlignment = HorizontalAlignment.Center;
+        keyboardGrid.VerticalAlignment = VerticalAlignment.Center;
 
         keyboardGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         keyboardGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
@@ -61,13 +70,13 @@ public sealed class KeyboardUserInterface
 
     private Grid BuildKeyboardRow(string keys, double leftIndent = 0)
     {
-        var rowGrid = new Grid
-        {
-            HorizontalAlignment = HorizontalAlignment.Center,
-            Margin = new Thickness(leftIndent, 4, 0, 4),
-        };
+        var vmFactory = App.Startup.ServiceProvider.GetRequiredService<IViewModelFactory>();
 
-        // One column per key
+        var rowGrid = GridFactory.CreateDefaultGrid();
+
+        rowGrid.HorizontalAlignment = HorizontalAlignment.Center;
+        rowGrid.Margin = new Thickness(leftIndent, 4, 0, 4);
+
         for (var i = 0; i < keys.Length; i++)
         {
             rowGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -77,7 +86,7 @@ public sealed class KeyboardUserInterface
         {
             var c = keys[i];
 
-            var vm = new CharacterIndicatorViewModel(c);
+            var vm = vmFactory.CreateCharacterIndicatorViewModel(c);
             var key = new CharacterIndicator(vm)
             {
                 Width = 36,

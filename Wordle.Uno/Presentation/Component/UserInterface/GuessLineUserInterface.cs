@@ -1,5 +1,8 @@
+using Wordle.Uno.Abstraction;
+using Wordle.Uno.Extensions;
 using Wordle.Uno.Presentation.Component.Logic;
 using Wordle.Uno.Presentation.Component.ViewModel;
+using Wordle.Uno.Presentation.Factory;
 
 namespace Wordle.Uno.Presentation.Component.UserInterface;
 
@@ -16,27 +19,33 @@ public sealed class GuessLineUserInterface
 
     public UIElement CreateContent()
     {
-        var panel = new StackPanel
-        {
-            Orientation = Orientation.Horizontal,
-            Spacing = 6,
-            HorizontalAlignment = HorizontalAlignment.Center,
-        };
+        var vmFactory = App.Startup.ServiceProvider.GetRequiredService<IViewModelFactory>();
+
+        var grid = GridFactory.CreateDefaultGrid();
+
+        grid.HorizontalAlignment = HorizontalAlignment.Center;
+        grid.VerticalAlignment = VerticalAlignment.Center;
 
         for (int i = 0; i < viewModel.WordLength; i++)
         {
-            var tile = new CharacterIndicator(new CharacterIndicatorViewModel(viewModel.GuessNumber, i))
+            grid.ColumnDefinitions.Add(new ColumnDefinition
+            {
+                Width = GridLength.Auto
+            });
+
+            var vm = vmFactory.CreateCharacterIndicatorViewModel(viewModel.GuessNumber, i);
+            var tile = new CharacterIndicator(vm)
             {
                 Width = 44,
                 Height = 44,
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(6),
-                Margin = new Thickness(0),
-            };
+                Margin = new Thickness(3, 0, 3, 0)
+            }.SetColumn(i);
 
-            panel.Children.Add(tile);
+            grid.Children.Add(tile);
         }
 
-        return panel;
+        return grid;
     }
 }

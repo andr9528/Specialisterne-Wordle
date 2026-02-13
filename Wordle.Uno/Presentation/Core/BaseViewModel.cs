@@ -48,6 +48,7 @@ public abstract partial class BaseViewModel : ObservableObject, IRecipient<GameC
     /// </summary>
     protected virtual void OnGameChanged(IGame game)
     {
+        if (game == null) throw new ArgumentNullException(nameof(game));
     }
 
     /// <summary>
@@ -55,6 +56,8 @@ public abstract partial class BaseViewModel : ObservableObject, IRecipient<GameC
     /// </summary>
     protected virtual void OnGuessProcessed(IGame game, IGuess guess)
     {
+        if (game == null) throw new ArgumentNullException(nameof(game));
+        if (guess == null) throw new ArgumentNullException(nameof(guess));
     }
 
     public void Dispose()

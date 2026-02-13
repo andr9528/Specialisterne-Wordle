@@ -1,3 +1,4 @@
+using Microsoft.UI.Dispatching;
 using Wordle.Abstraction.Services;
 using Wordle.Uno.Presentation.Region.ViewModel;
 
@@ -8,6 +9,7 @@ public sealed class GamePageRegionLogic : IDisposable
     private readonly GamePageRegion region;
     private readonly GamePageRegionViewModel viewModel;
     private readonly IGameService gameService;
+    private DispatcherQueue dispatcher;
 
     private Action? recreateGuessScrollView;
 
@@ -16,6 +18,8 @@ public sealed class GamePageRegionLogic : IDisposable
         this.region = region ?? throw new ArgumentNullException(nameof(region));
         this.viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
         this.gameService = gameService;
+
+        dispatcher = DispatcherQueue.GetForCurrentThread();
 
         _ = gameService.Initialize();
     }

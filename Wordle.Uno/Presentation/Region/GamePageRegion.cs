@@ -1,4 +1,5 @@
 using Wordle.Abstraction.Services;
+using Wordle.Uno.Abstraction;
 using Wordle.Uno.Presentation.Region.Logic;
 using Wordle.Uno.Presentation.Region.UserInterface;
 using Wordle.Uno.Presentation.Region.ViewModel;
@@ -9,7 +10,9 @@ public sealed class GamePageRegion : Border
 {
     public GamePageRegion()
     {
-        DataContext = new GamePageRegionViewModel();
+        var vmFactory = App.Startup.ServiceProvider.GetRequiredService<IViewModelFactory>();
+
+        DataContext = vmFactory.CreateGamePageRegionViewModel();
 
         var gameService = App.Startup.ServiceProvider.GetService<IGameService>() ?? throw new ArgumentNullException(nameof(IGameService));
 
