@@ -5,15 +5,19 @@ using Wordle.Uno.Presentation.Core;
 
 namespace Wordle.Uno.Presentation.Region.ViewModel;
 
-public sealed partial class GamePageRegionViewModel : BaseViewModel
+public sealed partial class GamePageRegionViewModel : BaseViewModel<GamePageRegionViewModel>
 {
     private readonly IUiDispatcher uiDispatcher;
-    [ObservableProperty] private GuessScrollViewViewModel guessScrollViewViewModel = new(0, 0);
+    private readonly IViewModelFactory vmFactory;
+    [ObservableProperty] private GuessScrollViewViewModel guessScrollViewViewModel;
     public event Action? GuessScrollViewViewModelChanged;
 
-    public GamePageRegionViewModel(IUiDispatcher uiDispatcher)
+    public GamePageRegionViewModel(ILogger<GamePageRegionViewModel> logger, IUiDispatcher uiDispatcher, IViewModelFactory vmFactory) : base(logger)
     {
         this.uiDispatcher = uiDispatcher;
+        this.vmFactory = vmFactory;
+
+        guessScrollViewViewModel = vmFactory.CreateGuessScrollViewViewModel(0, 0);
     }
 
     protected override void OnGameChanged(IGame game)
@@ -26,9 +30,7 @@ public sealed partial class GamePageRegionViewModel : BaseViewModel
         var maxGuesses = game.AttemptsLeft;
         var wordLength = game.Word.Letters.Count;
 
-        uiDispatcher.Enqueue(() => GuessScrollViewViewModel = new GuessScrollViewViewModel(maxGuesses, wordLength));
-
-        GuessScrollViewViewModel = new GuessScrollViewViewModel(maxGuesses, wordLength);
+        uiDispatcher.Enqueue(() => GuessScrollViewViewModel = vmFactory.CreateGuessScrollViewViewModel(maxGuesses, wordLength));
     }
 
     partial void OnGuessScrollViewViewModelChanged(GuessScrollViewViewModel oldValue, GuessScrollViewViewModel newValue)

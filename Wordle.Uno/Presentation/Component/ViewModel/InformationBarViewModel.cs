@@ -4,12 +4,12 @@ using Wordle.Uno.Presentation.Core;
 
 namespace Wordle.Uno.Presentation.Component.ViewModel;
 
-public sealed partial class InformationBarViewModel : BaseViewModel
+public sealed partial class InformationBarViewModel : BaseViewModel<InformationBarViewModel>
 {
     private readonly IUiDispatcher uiDispatcher;
-    private const string ATTEMPTS_LEFT = "Attempts Left: "; 
+    private const string ATTEMPTS_LEFT = "Attempts Left: ";
 
-    public InformationBarViewModel(IUiDispatcher uiDispatcher)
+    public InformationBarViewModel(ILogger<InformationBarViewModel> logger, IUiDispatcher uiDispatcher) : base(logger)
     {
         this.uiDispatcher = uiDispatcher;
         attemptsLeftMessage = ATTEMPTS_LEFT + "Unknown";

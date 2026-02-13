@@ -3,12 +3,12 @@ using Wordle.Uno.Presentation.Core;
 
 namespace Wordle.Uno.Presentation.Component.ViewModel;
 
-public sealed partial class GuessScrollViewViewModel : BaseViewModel
+public sealed partial class GuessScrollViewViewModel : BaseViewModel<GuessScrollViewViewModel>
 {
     public int MaxGuesses { get; }
     public int WordLength { get; }
 
-    public GuessScrollViewViewModel(int maxGuesses, int wordLength)
+    public GuessScrollViewViewModel(ILogger<GuessScrollViewViewModel> logger, int maxGuesses, int wordLength) : base(logger)
     {
         MaxGuesses = maxGuesses;
         WordLength = wordLength;

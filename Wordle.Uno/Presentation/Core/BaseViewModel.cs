@@ -1,16 +1,19 @@
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.UI.Dispatching;
 using Wordle.Abstraction.Interfaces.Model.Entity;
 using Wordle.Services;
 
 namespace Wordle.Uno.Presentation.Core;
 
-public abstract partial class BaseViewModel : ObservableObject, IRecipient<GameChangedMessage>,
-    IRecipient<GuessProcessedMessage>, IDisposable
+public abstract partial class BaseViewModel<TViewModel> : ObservableObject, IRecipient<GameChangedMessage>,
+    IRecipient<GuessProcessedMessage>, IDisposable where TViewModel : BaseViewModel<TViewModel>
 {
+    protected readonly ILogger<TViewModel> logger;
     private bool _isRegistered;
 
-    protected BaseViewModel()
+    protected BaseViewModel(ILogger<TViewModel> logger)
     {
+        this.logger = logger;
         RegisterMessenger();
     }
 
@@ -37,7 +40,6 @@ public abstract partial class BaseViewModel : ObservableObject, IRecipient<GameC
         _isRegistered = false;
     }
 
-    // MVVM Toolkit will call these when messages arrive.
     void IRecipient<GameChangedMessage>.Receive(GameChangedMessage message) => OnGameChanged(message.Game);
 
     void IRecipient<GuessProcessedMessage>.Receive(GuessProcessedMessage message) =>
@@ -48,6 +50,9 @@ public abstract partial class BaseViewModel : ObservableObject, IRecipient<GameC
     /// </summary>
     protected virtual void OnGameChanged(IGame game)
     {
+        logger.LogDebug("{OnEventName} on thread: {ThreadId}, UI access: {HasAccess}", nameof(OnGameChanged),
+            Environment.CurrentManagedThreadId, DispatcherQueue.GetForCurrentThread()?.HasThreadAccess);
+
         if (game == null) throw new ArgumentNullException(nameof(game));
     }
 
@@ -56,6 +61,9 @@ public abstract partial class BaseViewModel : ObservableObject, IRecipient<GameC
     /// </summary>
     protected virtual void OnGuessProcessed(IGame game, IGuess guess)
     {
+        logger.LogDebug("{OnEventName} on thread: {ThreadId}, UI access: {HasAccess}", nameof(OnGuessProcessed),
+            Environment.CurrentManagedThreadId, DispatcherQueue.GetForCurrentThread()?.HasThreadAccess);
+
         if (game == null) throw new ArgumentNullException(nameof(game));
         if (guess == null) throw new ArgumentNullException(nameof(guess));
     }

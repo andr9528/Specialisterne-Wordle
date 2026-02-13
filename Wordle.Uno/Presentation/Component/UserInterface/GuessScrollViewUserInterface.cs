@@ -1,3 +1,4 @@
+using Wordle.Uno.Abstraction;
 using Wordle.Uno.Extensions;
 using Wordle.Uno.Presentation.Component.Logic;
 using Wordle.Uno.Presentation.Component.ViewModel;
@@ -18,6 +19,8 @@ public sealed class GuessScrollViewUserInterface
 
     public UIElement CreateContent()
     {
+        var vmFactory = App.Startup.ServiceProvider.GetRequiredService<IViewModelFactory>();
+        
         var grid = GridFactory.CreateDefaultGrid();
         grid.RowSpacing = 8;
 
@@ -27,7 +30,8 @@ public sealed class GuessScrollViewUserInterface
             {
                 Height = GridLength.Auto
             });
-            var guessLine = new GuessLine(new GuessLineViewModel(i + 1, viewModel.WordLength)).SetRow(i);
+            var vm = vmFactory.CreateGuessLineViewModel(i + 1, viewModel.WordLength);
+            var guessLine = new GuessLine(vm).SetRow(i);
             grid.Children.Add(guessLine);
         }
 

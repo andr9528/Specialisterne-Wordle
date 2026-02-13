@@ -5,30 +5,18 @@ using Wordle.Uno.Presentation.Core;
 
 namespace Wordle.Uno.Presentation.Component.ViewModel;
 
-public sealed partial class CharacterIndicatorViewModel : BaseViewModel
+public sealed partial class CharacterIndicatorViewModel : BaseViewModel<CharacterIndicatorViewModel>
 {
     private readonly IUiDispatcher uiDispatcher;
 
-    /// <summary>
-    /// Creates a version for displaying characters on the Game Keyboard.
-    /// </summary>
-    /// <param name="uiDispatcher"></param>
-    /// <param name="character">Character to be displayed.</param>
-    public CharacterIndicatorViewModel(IUiDispatcher uiDispatcher, char? character)
+    public CharacterIndicatorViewModel(ILogger<CharacterIndicatorViewModel> logger, IUiDispatcher uiDispatcher, char? character) : base(logger)
     {
         this.uiDispatcher = uiDispatcher;
         this.character = character.ToString() ?? string.Empty;
         isPartOfKeyboard = true;
     }
 
-    /// <summary>
-    /// Creates a version for displaying characters in Guesses.
-    /// </summary>
-    /// <param name="character">Character to be displayed.</param>
-    /// <param name="uiDispatcher"></param>
-    /// <param name="guessNumber">Which Guess, i.e. row, this indicator is linked to.</param>
-    /// <param name="letterPosition">Which Position in the guess, i.e. column, this indicator is linked to.</param>
-    public CharacterIndicatorViewModel(IUiDispatcher uiDispatcher, int guessNumber, int letterPosition, char? character = null)
+    public CharacterIndicatorViewModel(ILogger<CharacterIndicatorViewModel> logger, IUiDispatcher uiDispatcher, int guessNumber, int letterPosition, char? character = null) : base(logger)
     {
         this.character = character.ToString() ?? string.Empty;
         this.uiDispatcher = uiDispatcher;

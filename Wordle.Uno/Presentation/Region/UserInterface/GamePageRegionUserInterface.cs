@@ -34,14 +34,15 @@ public sealed class GamePageRegionUserInterface
         grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-        var vm = vmFactory.CreateInformationBarViewModel();
-        var informationBar = new InformationBar(vm).SetRow(0);
+        var informationBarViewModel = vmFactory.CreateInformationBarViewModel();
+        var informationBar = new InformationBar(informationBarViewModel).SetRow(0);
         guessHostGrid = new Grid()
         {
             VerticalAlignment = VerticalAlignment.Stretch,
             HorizontalAlignment = HorizontalAlignment.Stretch,
         }.SetRow(1);
-        var keyboard = new Keyboard(new KeyboardViewModel()).SetRow(2);
+        var keyboardViewModel = vmFactory.CreateKeyboardViewModel();
+        var keyboard = new Keyboard(keyboardViewModel).SetRow(2);
 
         RecreateGuessScrollView();
 

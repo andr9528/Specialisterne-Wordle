@@ -16,25 +16,52 @@ public class ViewModelFactory : IViewModelFactory
     /// <inheritdoc />
     public CharacterIndicatorViewModel CreateCharacterIndicatorViewModel(char? character)
     {
-        return new CharacterIndicatorViewModel(uiDispatcher, character);
+        var logger = App.Startup.ServiceProvider.GetRequiredService<ILogger<CharacterIndicatorViewModel>>();
+        return new CharacterIndicatorViewModel(logger, uiDispatcher, character);
     }
 
     /// <inheritdoc />
     public CharacterIndicatorViewModel CreateCharacterIndicatorViewModel(
         int guessNumber, int letterPosition, char? character = null)
     {
-        return new CharacterIndicatorViewModel(uiDispatcher, guessNumber, letterPosition, character);
+        var logger = App.Startup.ServiceProvider.GetRequiredService<ILogger<CharacterIndicatorViewModel>>();
+        return new CharacterIndicatorViewModel(logger, uiDispatcher, guessNumber, letterPosition, character);
     }
 
     /// <inheritdoc />
     public GamePageRegionViewModel CreateGamePageRegionViewModel()
     {
-        return new GamePageRegionViewModel(uiDispatcher);
+        var logger = App.Startup.ServiceProvider.GetRequiredService<ILogger<GamePageRegionViewModel>>();
+        return new GamePageRegionViewModel(logger, uiDispatcher, this);
     }
 
     /// <inheritdoc />
     public InformationBarViewModel CreateInformationBarViewModel()
     {
-        return new InformationBarViewModel(uiDispatcher);
+        var logger = App.Startup.ServiceProvider.GetRequiredService<ILogger<InformationBarViewModel>>();
+        return new InformationBarViewModel(logger, uiDispatcher);
+    }
+
+    /// <inheritdoc />
+    public GuessScrollViewViewModel CreateGuessScrollViewViewModel(int maxGuesses, int wordLength)
+    {
+        var logger = App.Startup.ServiceProvider.GetRequiredService<ILogger<GuessScrollViewViewModel>>();
+        return new GuessScrollViewViewModel(logger, maxGuesses, wordLength);
+    }
+
+    /// <param name="guessNumber"></param>
+    /// <param name="wordLength"></param>
+    /// <inheritdoc />
+    public GuessLineViewModel CreateGuessLineViewModel(int guessNumber, int wordLength)
+    {
+        var logger = App.Startup.ServiceProvider.GetRequiredService<ILogger<GuessLineViewModel>>();
+        return new GuessLineViewModel(logger, guessNumber, wordLength);
+    }
+
+    /// <inheritdoc />
+    public KeyboardViewModel CreateKeyboardViewModel()
+    {
+        var logger = App.Startup.ServiceProvider.GetRequiredService<ILogger<KeyboardViewModel>>();
+        return new KeyboardViewModel(logger);
     }
 }

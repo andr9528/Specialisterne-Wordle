@@ -3,9 +3,9 @@ using Wordle.Uno.Presentation.Core;
 
 namespace Wordle.Uno.Presentation.Component.ViewModel;
 
-public sealed partial class KeyboardViewModel : BaseViewModel
+public sealed partial class KeyboardViewModel : BaseViewModel<KeyboardViewModel>
 {
-    public KeyboardViewModel()
+    public KeyboardViewModel(ILogger<KeyboardViewModel> logger) : base(logger)
     {
 
     }
