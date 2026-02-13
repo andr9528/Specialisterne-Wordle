@@ -44,7 +44,7 @@ public sealed class CharacterIndicatorUserInterface
         text.SetBinding(TextBlock.TextProperty, new Binding
         {
             Path = nameof(viewModel.Character),
-            Mode = BindingMode.OneWay,
+            Mode = BindingMode.TwoWay,
         });
         return text;
     }

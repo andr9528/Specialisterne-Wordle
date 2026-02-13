@@ -11,9 +11,9 @@ public sealed class Keyboard : Border
 {
     public Keyboard(KeyboardViewModel viewModel)
     {
-        ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+        DataContext = ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
 
-        Logic = new KeyboardLogic(ViewModel);
+        Logic = ActivatorUtilities.CreateInstance<KeyboardLogic>(App.Startup.ServiceProvider, viewModel);
         var ui = new KeyboardUserInterface(Logic, ViewModel);
 
         Child = ui.CreateContent();

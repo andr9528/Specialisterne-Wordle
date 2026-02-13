@@ -11,7 +11,7 @@ public sealed class InformationBar : Border
 {
     public InformationBar(InformationBarViewModel viewModel)
     {
-        ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+        DataContext = ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
 
         Logic = new InformationBarLogic(ViewModel);
         var ui = new InformationBarUserInterface(Logic, ViewModel);

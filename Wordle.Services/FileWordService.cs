@@ -22,7 +22,12 @@ public class FileWordService : BaseWordService<FileWordService>
         logger.LogInformation("Loading words from file at '{FilePath}'.", filePath);
         var lines = await File.ReadAllLinesAsync(filePath);
 
-        return lines.Where(line => !string.IsNullOrWhiteSpace(line)).Select(line => line.Trim()).ToList();
+        var filteredLines = lines.Where(line => !string.IsNullOrWhiteSpace(line)).Skip(1).Select(line => line.Trim())
+            .ToList();
+
+        logger.LogInformation($"Loaded {filteredLines.Count} words into cache.");
+
+        return filteredLines;
     }
 }
 

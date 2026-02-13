@@ -11,7 +11,7 @@ public sealed class GuessLine : Border
 {
     public GuessLine(GuessLineViewModel viewModel)
     {
-        ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+        DataContext = ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
 
         Logic = new GuessLineLogic(ViewModel);
         var ui = new GuessLineUserInterface(Logic, ViewModel);

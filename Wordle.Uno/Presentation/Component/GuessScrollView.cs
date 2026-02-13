@@ -11,7 +11,7 @@ public sealed class GuessScrollView : Border
 {
     public GuessScrollView(GuessScrollViewViewModel viewModel)
     {
-        ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+        DataContext = ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
 
         Logic = new GuessScrollViewLogic(ViewModel);
         var ui = new GuessScrollViewUserInterface(Logic, ViewModel);

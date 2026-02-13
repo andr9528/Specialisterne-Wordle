@@ -24,6 +24,7 @@ public sealed class InformationBarUserInterface
         var message = new TextBlock
         {
             VerticalAlignment = VerticalAlignment.Center,
+            HorizontalTextAlignment = TextAlignment.Center,
             TextWrapping = TextWrapping.Wrap,
         };
         message.SetBinding(TextBlock.TextProperty, new Binding

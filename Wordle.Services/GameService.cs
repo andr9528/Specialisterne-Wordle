@@ -36,6 +36,9 @@ public class GameService : IGameService
     {
         try
         {
+            // TODO: Change to new method that ensure cache has content.
+            await wordService.GetRandomWord();
+
             if (_currentGame is null) throw new ArgumentNullException(nameof(_currentGame));
             if (await ShouldReturnEarly(guessedWord))
             {

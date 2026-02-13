@@ -33,10 +33,10 @@ public sealed class KeyboardUserInterface
             Height = GridLength.Auto
         });
 
-        TextBox input = BuildGuessInput().SetRow(0);
+        Grid inputArea = BuildGuessInput().SetRow(0);
         Grid keyboardGrid = BuildKeyboardGrid().SetRow(1);
 
-        root.Children.Add(input);
+        root.Children.Add(inputArea);
         root.Children.Add(keyboardGrid);
 
         return root;
@@ -105,11 +105,54 @@ public sealed class KeyboardUserInterface
     }
 
 
-    private TextBox BuildGuessInput()
+    private Grid BuildGuessInput()
+    {
+        var root = GridFactory.CreateDefaultGrid();
+        root.Margin = new Thickness(16, 0, 16, 0);
+
+        root.ColumnDefinitions.Add(new ColumnDefinition
+        {
+            Width = new GridLength(85, GridUnitType.Star)
+        });
+
+        root.ColumnDefinitions.Add(new ColumnDefinition
+        {
+            Width = new GridLength(15, GridUnitType.Star)
+        });
+
+        var input = BuildInputTextBlock().SetColumn(0);
+        var submit = BuildSubmitButton().SetColumn(1);
+
+        root.Children.Add(input);
+        root.Children.Add(submit);
+
+        return root;
+    }
+
+    private Button BuildSubmitButton()
+    {
+        var submit = new Button
+        {
+            Content = "Guess",
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Center,
+            Margin = new Thickness(8, 0, 0, 0),
+        };
+
+        submit.Click += (sender, args) => _ = logic.SubmitOnClick(sender, args);
+
+        return submit;
+    }
+
+
+
+    private TextBox BuildInputTextBlock()
     {
         var input = new TextBox
         {
             PlaceholderText = "Type your guess…",
+            BorderThickness = new Thickness(12),
+            TextAlignment = TextAlignment.Center,
         };
 
         input.SetBinding(TextBox.TextProperty, new Binding
@@ -118,6 +161,13 @@ public sealed class KeyboardUserInterface
             Mode = BindingMode.TwoWay,
             UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
         });
+
+        input.SetBinding(Control.BorderBrushProperty, new Binding
+        {
+            Path = nameof(viewModel.InputBorderBrush),
+            Mode = BindingMode.OneWay,
+        });
+
         return input;
     }
 }
