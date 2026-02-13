@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.Messaging;
+using Microsoft.Extensions.Logging;
 using Wordle.Abstraction.Enums;
 using Wordle.Abstraction.Interfaces.Model.Entity;
 using Wordle.Abstraction.Interfaces.Persistence;
@@ -14,13 +15,15 @@ public class GameService : IGameService
     private readonly IEntityQueryService<Game, SearchableGame> gameQueryService;
     private readonly IWordService wordService;
     private readonly IGuessService guessService;
+    private readonly ILogger<GameService> logger;
     private static Game? _currentGame = null;
 
-    public GameService(IEntityQueryService<Game, SearchableGame> gameQueryService, IWordService wordService, IGuessService guessService)
+    public GameService(IEntityQueryService<Game, SearchableGame> gameQueryService, IWordService wordService, IGuessService guessService, ILogger<GameService> logger)
     {
         this.gameQueryService = gameQueryService;
         this.wordService = wordService;
         this.guessService = guessService;
+        this.logger = logger;
     }
 
     public Task StartNewGame()
@@ -34,9 +37,11 @@ public class GameService : IGameService
         if (_currentGame is null) throw new ArgumentNullException(nameof(_currentGame));
         if (await ShouldReturnEarly(guessedWord))
         {
+            logger.LogInformation("The guess is invalid - returning early.");
             return false;
         }
 
+        logger.LogInformation("The guess is valid - continuing...");
         var guess = guessService.ProcessGuess(_currentGame.Word, guessedWord, _currentGame.Guesses.Count);
         _currentGame.Guesses.Add(guess);
         _currentGame.AttemptsLeft--;
@@ -45,6 +50,10 @@ public class GameService : IGameService
             _currentGame.GameState = GameState.WON;
         else if (_currentGame.AttemptsLeft <= 0)
             _currentGame.GameState = GameState.LOST;
+
+        if (_currentGame.GameState == GameState.WON || _currentGame.GameState == GameState.LOST)
+            logger.LogInformation("The current game has been {State} - the word was '{Word}'.",
+                _currentGame.GameState.ToString().ToLowerInvariant(), _currentGame.Word.Content);
 
         await gameQueryService.UpdateEntity(_currentGame);
 
@@ -57,6 +66,7 @@ public class GameService : IGameService
 
     private ICollection<ILetter> BuildAlphabetLettersFromGuesses(IGame game)
     {
+        logger.LogInformation("Updating Games Letters information...");
         var bestByChar = new Dictionary<char, ILetter>(26);
 
         foreach (var letter in game.Guesses.SelectMany(g => g.Word.Letters))
@@ -81,11 +91,17 @@ public class GameService : IGameService
     /// <inheritdoc />
     public async Task Initialize()
     {
-        if (_currentGame != null) return;
+        logger.LogInformation("Initializing Game Service...");
+        if (_currentGame != null)
+        {
+            logger.LogWarning($"{nameof(Initialize)} called, while Current Game was already set.");
+            return;
+        }
 
         var games = (await gameQueryService.GetEntities(new SearchableGame() {GameState = GameState.ONGOING,})).ToList();
         if (games.Count >= 1)
         {
+            logger.LogInformation("One or more ongoing games has been found - continuing the first one found.");
             _currentGame = games[0];
             WeakReferenceMessenger.Default.Send(new GameChangedMessage(_currentGame));
             return;
@@ -96,6 +112,7 @@ public class GameService : IGameService
 
     private async Task<bool> ShouldReturnEarly(string guessedWord)
     {
+        logger.LogInformation("Checking if guessed word - {GuessedWord} - is a valid guess.", guessedWord);
         if (guessedWord.Length != _currentGame!.Letters.Count) return true;
         if (!await wordService.IsGuessedWordValid(guessedWord)) return true;
         return false;
@@ -103,6 +120,7 @@ public class GameService : IGameService
 
     private async Task AbandonCurrentGame()
     {
+        logger.LogInformation("Abandoning the current game...");
         _currentGame!.GameState = GameState.ABANDONED;
         await gameQueryService.UpdateEntity(_currentGame!);
 
@@ -111,6 +129,7 @@ public class GameService : IGameService
 
     private async Task StartFreshGame()
     {
+        logger.LogInformation("Starting a new game...");
         var word = await wordService.GetRandomWord();
         _currentGame = new Game() {Word = word, AttemptsLeft = word.Letters.Count + 1, GameState = GameState.ONGOING,};
 

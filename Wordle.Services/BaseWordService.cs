@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using Wordle.Abstraction.Enums;
 using Wordle.Abstraction.Interfaces.Model.Entity;
 using Wordle.Abstraction.Services;
@@ -5,8 +6,15 @@ using Wordle.Model.Entity;
 
 namespace Wordle.Services;
 
-public abstract class BaseWordService : IWordService
+public abstract class BaseWordService<TService> : IWordService where TService : IWordService
 {
+    protected readonly ILogger<TService> logger;
+
+    protected BaseWordService(ILogger<TService> logger)
+    {
+        this.logger = logger;
+    }
+
     private IList<string>? _words = null;
 
     protected abstract Task<IList<string>> LoadWords();
@@ -16,6 +24,7 @@ public abstract class BaseWordService : IWordService
     {
         if (_words != null)
         {
+            logger.LogInformation("Returning cached list of word.");
             return _words;
         }
 
@@ -26,6 +35,7 @@ public abstract class BaseWordService : IWordService
     /// <inheritdoc />
     public async Task<IWord> GetRandomWord()
     {
+        logger.LogInformation("Choosing a random word from valid word...");
         var words = await GetWords();
 
         var rawWord = words[Random.Shared.Next(words.Count)];
@@ -39,6 +49,7 @@ public abstract class BaseWordService : IWordService
     /// <inheritdoc />
     public async Task<bool> IsGuessedWordValid(string guess)
     {
+        logger.LogInformation("Checking if a guessed word - {Guess} - is in the list of words.", guess);
         return (await GetWords()).Contains(guess);
     }
 
