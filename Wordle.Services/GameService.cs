@@ -34,34 +34,42 @@ public class GameService : IGameService
     /// <inheritdoc />
     public async Task<bool> ProcessGuess(string guessedWord)
     {
-        if (_currentGame is null) throw new ArgumentNullException(nameof(_currentGame));
-        if (await ShouldReturnEarly(guessedWord))
+        try
         {
-            logger.LogInformation("The guess is invalid - returning early.");
-            return false;
+            if (_currentGame is null) throw new ArgumentNullException(nameof(_currentGame));
+            if (await ShouldReturnEarly(guessedWord))
+            {
+                logger.LogInformation("The guess is invalid - returning early.");
+                return false;
+            }
+
+            logger.LogInformation("The guess is valid - continuing...");
+            var guess = guessService.ProcessGuess(_currentGame.Word, guessedWord, _currentGame.Guesses.Count);
+            _currentGame.Guesses.Add(guess);
+            _currentGame.AttemptsLeft--;
+
+            if (guess.Word.Letters.All(x => x.CharacterState == CharacterState.CORRECT))
+                _currentGame.GameState = GameState.WON;
+            else if (_currentGame.AttemptsLeft <= 0)
+                _currentGame.GameState = GameState.LOST;
+
+            if (_currentGame.GameState == GameState.WON || _currentGame.GameState == GameState.LOST)
+                logger.LogInformation("The current game has been {State} - the word was '{Word}'.",
+                    _currentGame.GameState.ToString().ToLowerInvariant(), _currentGame.Word.Content);
+
+            await gameQueryService.UpdateEntity(_currentGame);
+
+            _currentGame.Letters = BuildAlphabetLettersFromGuesses(_currentGame);
+            WeakReferenceMessenger.Default.Send(new GuessProcessedMessage(_currentGame, guess));
+            WeakReferenceMessenger.Default.Send(new GameChangedMessage(_currentGame));
+
+            return true;
         }
-
-        logger.LogInformation("The guess is valid - continuing...");
-        var guess = guessService.ProcessGuess(_currentGame.Word, guessedWord, _currentGame.Guesses.Count);
-        _currentGame.Guesses.Add(guess);
-        _currentGame.AttemptsLeft--;
-
-        if (guess.Word.Letters.All(x => x.CharacterState == CharacterState.CORRECT))
-            _currentGame.GameState = GameState.WON;
-        else if (_currentGame.AttemptsLeft <= 0)
-            _currentGame.GameState = GameState.LOST;
-
-        if (_currentGame.GameState == GameState.WON || _currentGame.GameState == GameState.LOST)
-            logger.LogInformation("The current game has been {State} - the word was '{Word}'.",
-                _currentGame.GameState.ToString().ToLowerInvariant(), _currentGame.Word.Content);
-
-        await gameQueryService.UpdateEntity(_currentGame);
-
-        _currentGame.Letters = BuildAlphabetLettersFromGuesses(_currentGame);
-        WeakReferenceMessenger.Default.Send(new GuessProcessedMessage(_currentGame, guess));
-        WeakReferenceMessenger.Default.Send(new GameChangedMessage(_currentGame));
-
-        return true;
+        catch (Exception e)
+        {
+            logger.LogError(e, $"Exception caught during execution of {nameof(ProcessGuess)}.");
+            throw;
+        }
     }
 
     private ICollection<ILetter> BuildAlphabetLettersFromGuesses(IGame game)
@@ -91,23 +99,31 @@ public class GameService : IGameService
     /// <inheritdoc />
     public async Task Initialize()
     {
-        logger.LogInformation("Initializing Game Service...");
-        if (_currentGame != null)
+        try
         {
-            logger.LogWarning($"{nameof(Initialize)} called, while Current Game was already set.");
-            return;
-        }
+            logger.LogInformation("Initializing Game Service...");
+            if (_currentGame != null)
+            {
+                logger.LogWarning($"{nameof(Initialize)} called, while Current Game was already set.");
+                return;
+            }
 
-        var games = (await gameQueryService.GetEntities(new SearchableGame() {GameState = GameState.ONGOING,})).ToList();
-        if (games.Count >= 1)
+            var games = (await gameQueryService.GetEntities(new SearchableGame() { GameState = GameState.ONGOING, })).ToList();
+            if (games.Count >= 1)
+            {
+                logger.LogInformation("One or more ongoing games has been found - continuing the first one found.");
+                _currentGame = games[0];
+                WeakReferenceMessenger.Default.Send(new GameChangedMessage(_currentGame));
+                return;
+            }
+
+            await StartNewGame();
+        }
+        catch (Exception e)
         {
-            logger.LogInformation("One or more ongoing games has been found - continuing the first one found.");
-            _currentGame = games[0];
-            WeakReferenceMessenger.Default.Send(new GameChangedMessage(_currentGame));
-            return;
+            logger.LogError(e, $"Exception caught during execution of {nameof(Initialize)}.");
+            throw;
         }
-
-        await StartNewGame();
     }
 
     private async Task<bool> ShouldReturnEarly(string guessedWord)
@@ -132,6 +148,7 @@ public class GameService : IGameService
         logger.LogInformation("Starting a new game...");
         var word = await wordService.GetRandomWord();
         _currentGame = new Game() {Word = word, AttemptsLeft = word.Letters.Count + 1, GameState = GameState.ONGOING,};
+        _currentGame.Letters = BuildAlphabetLettersFromGuesses(_currentGame);
 
         await gameQueryService.AddEntity(_currentGame);
 
