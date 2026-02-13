@@ -17,7 +17,6 @@ public class GameQueryService : BaseEntityQueryService<WordleDatabaseContext, Ga
     {
         return context.Games.AsQueryable()
             .Include(x => x.Word).ThenInclude(x => x.Letters)
-            .Include(x => x.Letters)
             .Include(x => x.Guesses).ThenInclude(x=>x.Word).ThenInclude(x=>x.Letters);
     }
 
