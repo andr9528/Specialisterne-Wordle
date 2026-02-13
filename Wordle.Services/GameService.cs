@@ -87,6 +87,7 @@ public class GameService : IGameService
         if (games.Count >= 1)
         {
             _currentGame = games[0];
+            WeakReferenceMessenger.Default.Send(new GameChangedMessage(_currentGame));
             return;
         }
 
