@@ -24,10 +24,12 @@ public class LoggingStartupModule : IStartupModule
         level = LogEventLevel.Debug;
 #endif
 
-        Log.Logger = new LoggerConfiguration().Enrich.FromLogContext().WriteTo.Console(outputTemplate: LOG_PATTERN)
-            .WriteTo.File(logPath, outputTemplate: LOG_PATTERN, shared: true,
-                flushToDiskInterval: TimeSpan.FromMinutes(1), restrictedToMinimumLevel: level,
-                retainedFileCountLimit: 7, rollingInterval: RollingInterval.Day).CreateLogger();
+        var configuration = new LoggerConfiguration().Enrich.FromLogContext();
+        configuration = AddWriteToSegments(configuration);
+        configuration = ConfigureMinimumLevel(configuration);
+        configuration = AddLevelOverwrites(configuration);
+
+        Log.Logger = configuration.CreateLogger();
 
         services.AddLogging(x =>
         {
@@ -37,6 +39,36 @@ public class LoggingStartupModule : IStartupModule
 
         var logger = services.BuildServiceProvider().GetService<ILogger<LoggingStartupModule>>();
         logger?.LogDebug("Completed Configuration of Logging Services.");
+    }
+
+    private LoggerConfiguration ConfigureMinimumLevel(LoggerConfiguration configuration)
+    {
+        configuration = configuration.MinimumLevel.Debug();
+
+        return configuration;
+    }
+
+    private LoggerConfiguration AddWriteToSegments(LoggerConfiguration configuration)
+    {
+        var level = LogEventLevel.Information;
+#if DEBUG
+        level = LogEventLevel.Debug;
+#endif
+
+        configuration = configuration.WriteTo.Console(outputTemplate: LOG_PATTERN);
+        configuration = configuration.WriteTo.File(logPath, outputTemplate: LOG_PATTERN, shared: true,
+            flushToDiskInterval: TimeSpan.FromMinutes(1), restrictedToMinimumLevel: level, retainedFileCountLimit: 7,
+            rollingInterval: RollingInterval.Day);
+
+        return configuration;
+    }
+
+    private LoggerConfiguration AddLevelOverwrites(LoggerConfiguration configuration)
+    {
+        configuration = configuration.MinimumLevel.Override("Microsoft", LogEventLevel.Warning);
+        configuration = configuration.MinimumLevel.Override("Microsoft.EntityFrameworkCore", LogEventLevel.Information);
+
+        return configuration;
     }
 
     /// <inheritdoc />
