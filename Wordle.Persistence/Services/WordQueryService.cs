@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Wordle.Model.Entity;
 using Wordle.Model.Searchable;
 using Wordle.Persistence.Core;
@@ -14,7 +15,7 @@ public class WordQueryService : BaseEntityQueryService<WordleDatabaseContext, Wo
     /// <inheritdoc />
     protected override IQueryable<Word> GetBaseQuery()
     {
-        return context.Words.AsQueryable();
+        return context.Words.AsQueryable().Include(x=>x.Letters);
     }
 
     /// <inheritdoc />

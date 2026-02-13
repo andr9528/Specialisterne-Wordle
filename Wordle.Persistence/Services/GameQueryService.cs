@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Wordle.Model.Entity;
 using Wordle.Model.Searchable;
 using Wordle.Persistence.Core;
@@ -14,7 +15,10 @@ public class GameQueryService : BaseEntityQueryService<WordleDatabaseContext, Ga
     /// <inheritdoc />
     protected override IQueryable<Game> GetBaseQuery()
     {
-        return context.Games.AsQueryable();
+        return context.Games.AsQueryable()
+            .Include(x => x.Word).ThenInclude(x => x.Letters)
+            .Include(x => x.Letters)
+            .Include(x => x.Guesses).ThenInclude(x=>x.Word).ThenInclude(x=>x.Letters);
     }
 
     /// <inheritdoc />

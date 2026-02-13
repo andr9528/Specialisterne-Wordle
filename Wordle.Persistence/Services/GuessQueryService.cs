@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Wordle.Model.Entity;
 using Wordle.Model.Searchable;
 using Wordle.Persistence.Core;
@@ -14,7 +15,7 @@ public class GuessQueryService : BaseEntityQueryService<WordleDatabaseContext, G
     /// <inheritdoc />
     protected override IQueryable<Guess> GetBaseQuery()
     {
-        return context.Guesses.AsQueryable();
+        return context.Guesses.AsQueryable().Include(x=>x.Word).ThenInclude(x=>x.Letters);
     }
 
     /// <inheritdoc />
