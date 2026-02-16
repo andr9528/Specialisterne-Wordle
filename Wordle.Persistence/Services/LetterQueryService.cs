@@ -23,7 +23,7 @@ public class LetterQueryService : BaseEntityQueryService<WordleDatabaseContext, 
     {
         if (searchable.Content != '\0')
         {
-            query = query.Where(x => char.ToUpperInvariant(x.Content) == char.ToUpperInvariant(searchable.Content));
+            query = query.Where(x => char.ToLower(x.Content) == char.ToLower(searchable.Content));
         }
 
         if (searchable.Position != 0)
@@ -36,7 +36,7 @@ public class LetterQueryService : BaseEntityQueryService<WordleDatabaseContext, 
             query = query.Where(x => x.WordId == searchable.WordId);
         }
 
-        if (!Equals(searchable.CharacterState, default(Abstraction.Enums.CharacterState)))
+        if (!Equals(searchable.CharacterState, default(CharacterState)))
         {
             query = query.Where(x => x.CharacterState == searchable.CharacterState);
         }

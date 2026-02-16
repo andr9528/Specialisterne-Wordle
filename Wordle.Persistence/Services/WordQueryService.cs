@@ -23,7 +23,7 @@ public class WordQueryService : BaseEntityQueryService<WordleDatabaseContext, Wo
     {
         if (!string.IsNullOrWhiteSpace(searchable.Content))
         {
-            query = query.Where(x => x.Content.ToUpperInvariant() == searchable.Content.ToUpperInvariant());
+            query = query.Where(x => x.Content.ToLower() == searchable.Content.ToLower());
         }
 
         return query;

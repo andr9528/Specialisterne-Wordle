@@ -1,7 +1,6 @@
-using Wordle.Model;
 using Wordle.Model.Uno;
 
-namespace Wordle.Uno.Tests;
+namespace Wordle.Tests;
 
 public class AppInfoTests
 {
