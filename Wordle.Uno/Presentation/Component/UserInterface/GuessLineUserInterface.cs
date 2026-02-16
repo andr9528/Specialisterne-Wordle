@@ -33,14 +33,14 @@ public sealed class GuessLineUserInterface
                 Width = GridLength.Auto
             });
 
-            var vm = vmFactory.CreateCharacterIndicatorViewModel(viewModel.GuessNumber, i);
+            var vm = vmFactory.CreateCharacterIndicatorViewModel(viewModel.GuessNumber, i, currentGame: viewModel.CurrentGame);
             var tile = new CharacterIndicator(vm)
             {
                 Width = 44,
                 Height = 44,
                 BorderThickness = new Thickness(1),
                 CornerRadius = new CornerRadius(6),
-                Margin = new Thickness(3, 0, 3, 0)
+                Margin = new Thickness(3, 0, 3, 0),
             }.SetColumn(i);
 
             grid.Children.Add(tile);

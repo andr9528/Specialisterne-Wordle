@@ -50,7 +50,7 @@ public abstract partial class BaseViewModel<TViewModel> : ObservableObject, IRec
     /// </summary>
     protected virtual void OnGameChanged(IGame game)
     {
-        logger.LogDebug("{OnEventName} on thread: {ThreadId}, UI access: {HasAccess}", nameof(OnGameChanged),
+        logger.LogTrace("{OnEventName} on thread: {ThreadId}, UI access: {HasAccess}", nameof(OnGameChanged),
             Environment.CurrentManagedThreadId, DispatcherQueue.GetForCurrentThread()?.HasThreadAccess);
 
         if (game == null) throw new ArgumentNullException(nameof(game));
@@ -61,7 +61,7 @@ public abstract partial class BaseViewModel<TViewModel> : ObservableObject, IRec
     /// </summary>
     protected virtual void OnGuessProcessed(IGame game, IGuess guess)
     {
-        logger.LogDebug("{OnEventName} on thread: {ThreadId}, UI access: {HasAccess}", nameof(OnGuessProcessed),
+        logger.LogTrace("{OnEventName} on thread: {ThreadId}, UI access: {HasAccess}", nameof(OnGuessProcessed),
             Environment.CurrentManagedThreadId, DispatcherQueue.GetForCurrentThread()?.HasThreadAccess);
 
         if (game == null) throw new ArgumentNullException(nameof(game));

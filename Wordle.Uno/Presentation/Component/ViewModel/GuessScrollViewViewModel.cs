@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using Wordle.Abstraction.Interfaces.Model.Entity;
 using Wordle.Uno.Presentation.Core;
 
 namespace Wordle.Uno.Presentation.Component.ViewModel;
@@ -7,10 +8,13 @@ public sealed partial class GuessScrollViewViewModel : BaseViewModel<GuessScroll
 {
     public int MaxGuesses { get; }
     public int WordLength { get; }
+    public IGame? CurrentGame { get; }
 
-    public GuessScrollViewViewModel(ILogger<GuessScrollViewViewModel> logger, int maxGuesses, int wordLength) : base(logger)
+    public GuessScrollViewViewModel(
+        ILogger<GuessScrollViewViewModel> logger, int maxGuesses, int wordLength, IGame? currentGame) : base(logger)
     {
         MaxGuesses = maxGuesses;
         WordLength = wordLength;
+        CurrentGame = currentGame;
     }
 }

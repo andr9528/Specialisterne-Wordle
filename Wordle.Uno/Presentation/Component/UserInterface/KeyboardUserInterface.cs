@@ -86,7 +86,7 @@ public sealed class KeyboardUserInterface
         {
             var c = keys[i];
 
-            var vm = vmFactory.CreateCharacterIndicatorViewModel(c);
+            var vm = vmFactory.CreateCharacterIndicatorViewModel(c, viewModel.CurrentGame);
             var key = new CharacterIndicator(vm)
             {
                 Width = 36,

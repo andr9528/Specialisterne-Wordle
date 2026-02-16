@@ -6,10 +6,11 @@ public sealed class CharacterStateToBrushConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, string language)
     {
+        Console.WriteLine($@"Converting '{value}' to a Brush");
+
         if (value is not CharacterState state)
             state = CharacterState.UNKNOWN;
 
-        // Map state -> color
         return state switch
         {
             CharacterState.UNKNOWN => new SolidColorBrush(Colors.White),

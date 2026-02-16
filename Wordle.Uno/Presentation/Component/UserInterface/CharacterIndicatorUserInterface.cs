@@ -10,23 +10,20 @@ public sealed class CharacterIndicatorUserInterface
 {
     private readonly CharacterIndicatorLogic logic;
     private readonly CharacterIndicatorViewModel viewModel;
-    private readonly Border host;
 
-    public CharacterIndicatorUserInterface(CharacterIndicatorLogic logic, CharacterIndicatorViewModel viewModel,
-        Border host)
+    public CharacterIndicatorUserInterface(CharacterIndicatorLogic logic, CharacterIndicatorViewModel viewModel)
     {
         this.logic = logic ?? throw new ArgumentNullException(nameof(logic));
         this.viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
-        this.host = host ?? throw new ArgumentNullException(nameof(host));
     }
 
     public UIElement CreateContent()
     {
-        SetHostBindings();
         TextBlock text = BuildContentTextBlock();
 
         var grid = GridFactory.CreateDefaultGrid();
         grid.Children.Add(text);
+        SetHostBindings(grid);
 
         return grid;
     }
@@ -49,9 +46,9 @@ public sealed class CharacterIndicatorUserInterface
         return text;
     }
 
-    private void SetHostBindings()
+    private void SetHostBindings(Grid grid)
     {
-        host.SetBinding(FrameworkElement.BackgroundProperty, new Binding
+        grid.SetBinding(FrameworkElement.BackgroundProperty, new Binding
         {
             Path = new PropertyPath(nameof(CharacterIndicatorViewModel.State)),
             Mode = BindingMode.TwoWay,

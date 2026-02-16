@@ -22,7 +22,7 @@ public class GuessService : IGuessService
     /// <inheritdoc />
     public IGuess ProcessGuess(IWord currentGameWord, string guessedWord, int currentGuessCount)
     {
-        logger.LogInformation($"Starting processing of guessed word - {guessedWord}");
+        logger.LogInformation($"Starting processing of guessed word - '{guessedWord}'");
         var letters = BuildLetters(guessedWord, currentGameWord);
         var word = new Word() {Content = guessedWord, Letters = letters.Cast<ILetter>().ToList()};
         return new Guess() {Word = word, Number = currentGuessCount + 1,};

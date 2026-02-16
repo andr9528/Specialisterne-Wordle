@@ -41,7 +41,7 @@ public sealed class GamePageRegionUserInterface
             VerticalAlignment = VerticalAlignment.Stretch,
             HorizontalAlignment = HorizontalAlignment.Stretch,
         }.SetRow(1);
-        var keyboardViewModel = vmFactory.CreateKeyboardViewModel();
+        var keyboardViewModel = vmFactory.CreateKeyboardViewModel(viewModel.CurrentGame);
         var keyboard = new Keyboard(keyboardViewModel).SetRow(2);
 
         RecreateGuessScrollView();

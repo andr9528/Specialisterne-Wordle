@@ -7,7 +7,7 @@ namespace Wordle.Uno.Presentation.Region.ViewModel;
 
 public sealed partial class GamePageRegionViewModel : BaseViewModel<GamePageRegionViewModel>
 {
-    private IGame? _currentGame;
+    public IGame? CurrentGame { get; set; }
     private readonly IUiDispatcher uiDispatcher;
     private readonly IViewModelFactory vmFactory;
     [ObservableProperty] private GuessScrollViewViewModel guessScrollViewViewModel;
@@ -23,17 +23,18 @@ public sealed partial class GamePageRegionViewModel : BaseViewModel<GamePageRegi
 
     protected override void OnGameChanged(IGame game)
     {
-        if (game.Guesses.Count != 0 || _currentGame != null)
+        var wasCurrentGameNull = CurrentGame == null;
+        CurrentGame = game;
+
+        if (game.Guesses.Count != 0 || !wasCurrentGameNull)
         {
             return;
         }
 
-        _currentGame = game;
-
         var maxGuesses = game.AttemptsLeft;
         var wordLength = game.Word.Letters.Count;
 
-        uiDispatcher.Enqueue(() => GuessScrollViewViewModel = vmFactory.CreateGuessScrollViewViewModel(maxGuesses, wordLength));
+        uiDispatcher.Enqueue(() => GuessScrollViewViewModel = vmFactory.CreateGuessScrollViewViewModel(maxGuesses, wordLength, CurrentGame));
     }
 
     partial void OnGuessScrollViewViewModelChanged(GuessScrollViewViewModel oldValue, GuessScrollViewViewModel newValue)

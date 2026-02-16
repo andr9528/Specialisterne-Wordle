@@ -36,9 +36,6 @@ public class GameService : IGameService
     {
         try
         {
-            // TODO: Change to new method that ensure cache has content.
-            await wordService.GetRandomWord();
-
             if (_currentGame is null) throw new ArgumentNullException(nameof(_currentGame));
             if (await ShouldReturnEarly(guessedWord))
             {
@@ -51,20 +48,21 @@ public class GameService : IGameService
             _currentGame.Guesses.Add(guess);
             _currentGame.AttemptsLeft--;
 
-            if (guess.Word.Letters.All(x => x.CharacterState == CharacterState.CORRECT))
-                _currentGame.GameState = GameState.WON;
-            else if (_currentGame.AttemptsLeft <= 0)
-                _currentGame.GameState = GameState.LOST;
-
-            if (_currentGame.GameState == GameState.WON || _currentGame.GameState == GameState.LOST)
-                logger.LogInformation("The current game has been {State} - the word was '{Word}'.",
-                    _currentGame.GameState.ToString().ToLowerInvariant(), _currentGame.Word.Content);
+            UpdateGameState(guess);
 
             await gameQueryService.UpdateEntity(_currentGame);
 
-            _currentGame.Letters = BuildAlphabetLettersFromGuesses(_currentGame);
-            WeakReferenceMessenger.Default.Send(new GuessProcessedMessage(_currentGame, guess));
-            WeakReferenceMessenger.Default.Send(new GameChangedMessage(_currentGame));
+            if (!(_currentGame.GameState is GameState.WON or GameState.LOST))
+
+            {
+                _currentGame.Letters = BuildAlphabetLettersFromGuesses(_currentGame);
+                WeakReferenceMessenger.Default.Send(new GuessProcessedMessage(_currentGame, guess));
+                WeakReferenceMessenger.Default.Send(new GameChangedMessage(_currentGame));
+            }
+            else
+            {
+                await StartNewGame();
+            }
 
             return true;
         }
@@ -73,6 +71,18 @@ public class GameService : IGameService
             logger.LogError(e, $"Exception caught during execution of {nameof(ProcessGuess)}.");
             throw;
         }
+    }
+
+    private void UpdateGameState(IGuess guess)
+    {
+        if (guess.Word.Letters.All(x => x.CharacterState == CharacterState.CORRECT))
+            _currentGame!.GameState = GameState.WON;
+        else if (_currentGame!.AttemptsLeft <= 0)
+            _currentGame.GameState = GameState.LOST;
+
+        if (_currentGame.GameState is GameState.WON or GameState.LOST)
+            logger.LogInformation("The current game has been '{State}' - the word was '{Word}'.",
+                _currentGame.GameState.ToString().ToLowerInvariant(), _currentGame.Word.Content);
     }
 
     private ICollection<ILetter> BuildAlphabetLettersFromGuesses(IGame game)
@@ -116,6 +126,7 @@ public class GameService : IGameService
             {
                 logger.LogInformation("One or more ongoing games has been found - continuing the first one found.");
                 _currentGame = games[0];
+                _currentGame.Letters = BuildAlphabetLettersFromGuesses(_currentGame);
                 WeakReferenceMessenger.Default.Send(new GameChangedMessage(_currentGame));
                 return;
             }
@@ -131,10 +142,29 @@ public class GameService : IGameService
 
     private async Task<bool> ShouldReturnEarly(string guessedWord)
     {
-        logger.LogInformation("Checking if guessed word - {GuessedWord} - is a valid guess.", guessedWord);
-        if (guessedWord.Length != _currentGame!.Letters.Count) return true;
-        if (!await wordService.IsGuessedWordValid(guessedWord)) return true;
-        return false;
+        try
+        {
+            logger.LogInformation("Checking if guessed word - {GuessedWord} - is a valid guess.", guessedWord);
+            if (guessedWord.Length != _currentGame!.Word.Letters.Count)
+            {
+                logger.LogDebug("The guessed words length '{GuessedWordLength}' did not match the length of the word to guess {LettersCount}", guessedWord.Length,
+                    _currentGame!.Word.Letters.Count);
+                return true;
+            }
+
+            if (await wordService.IsGuessedWordValid(guessedWord))
+            {
+                return false;
+            }
+
+            logger.LogDebug("The guessed word '{GuessedWord}' is not in the list of word.", guessedWord);
+            return true;
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, $"Exception was thrown while checking if we should return early.");
+            throw;
+        }
     }
 
     private async Task AbandonCurrentGame()

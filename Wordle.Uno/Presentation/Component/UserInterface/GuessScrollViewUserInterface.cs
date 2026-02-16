@@ -30,7 +30,7 @@ public sealed class GuessScrollViewUserInterface
             {
                 Height = GridLength.Auto
             });
-            var vm = vmFactory.CreateGuessLineViewModel(i + 1, viewModel.WordLength);
+            var vm = vmFactory.CreateGuessLineViewModel(i + 1, viewModel.WordLength, viewModel.CurrentGame);
             var guessLine = new GuessLine(vm).SetRow(i);
             grid.Children.Add(guessLine);
         }

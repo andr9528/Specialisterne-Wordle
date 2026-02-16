@@ -10,6 +10,4 @@ public sealed class CharacterIndicatorLogic
     {
         this.viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
     }
-
-    // TODO: Implement behavior later (e.g., state-to-style mapping if you prefer to keep it in logic).
 }

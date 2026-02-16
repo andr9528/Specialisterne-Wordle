@@ -14,7 +14,7 @@ public sealed class CharacterIndicator : Border
         DataContext = ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
 
         Logic = new CharacterIndicatorLogic(ViewModel);
-        var ui = new CharacterIndicatorUserInterface(Logic, ViewModel, this);
+        var ui = new CharacterIndicatorUserInterface(Logic, ViewModel);
 
         Child = ui.CreateContent();
     }
