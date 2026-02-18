@@ -50,7 +50,7 @@ public sealed partial class GamePageRegionViewModel : BaseViewModel<GamePageRegi
 
     private void UpdateGuessScrollViewViewModel(IGame changedGame)
     {
-        var maxGuesses = changedGame.AttemptsLeft;
+        var maxGuesses = changedGame.AttemptsLeft + changedGame.Guesses.Count;
         var wordLength = changedGame.Word.Letters.Count;
 
         uiDispatcher.Enqueue(() =>

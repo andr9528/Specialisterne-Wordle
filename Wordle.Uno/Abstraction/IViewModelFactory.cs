@@ -27,7 +27,7 @@ public interface IViewModelFactory
 
     GamePageRegionViewModel CreateGamePageRegionViewModel();
 
-    InformationBarViewModel CreateInformationBarViewModel();
+    InformationBarViewModel CreateInformationBarViewModel(IGame? currentGame);
 
     /// <summary>
     /// 
