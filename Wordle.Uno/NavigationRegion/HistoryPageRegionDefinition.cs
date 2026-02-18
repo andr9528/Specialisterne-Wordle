@@ -1,3 +1,4 @@
+using SkiaSharp;
 using Wordle.Uno.Abstraction;
 using Wordle.Uno.Presentation.Region;
 
@@ -6,6 +7,7 @@ namespace Wordle.Uno.NavigationRegion;
 public sealed class HistoryPageRegionDefinition : IPageRegion
 {
     private readonly ILogger<HistoryPageRegionDefinition> logger;
+    private UIElement? region;
 
     public HistoryPageRegionDefinition(ILogger<HistoryPageRegionDefinition> logger)
     {
@@ -19,6 +21,13 @@ public sealed class HistoryPageRegionDefinition : IPageRegion
     public UIElement CreateControl(IServiceProvider services)
     {
         logger.LogInformation($"Changing page to: {nameof(HistoryPageRegion)}");
-        return ActivatorUtilities.CreateInstance<HistoryPageRegion>(services);
+
+        if (region != null)
+        {
+            return region;
+        }
+
+        region = ActivatorUtilities.CreateInstance<HistoryPageRegion>(services);
+        return region;
     }
 }

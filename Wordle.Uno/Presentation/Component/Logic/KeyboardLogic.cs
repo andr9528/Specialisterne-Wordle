@@ -39,14 +39,19 @@ public sealed class KeyboardLogic
                 {
                     logger.LogDebug("Guess was invalid, so changing border colour to red briefly.");
                     dispatcher.Enqueue(() => viewModel.InputBorderBrush = invalidBorderBrush);
-                    Thread.Sleep(TimeSpan.FromSeconds(10));
+                    Thread.Sleep(TimeSpan.FromSeconds(4));
                     logger.LogDebug("Changing border colour back to gray now.");
                     dispatcher.Enqueue(() => viewModel.InputBorderBrush = defaultBorderBrush);
                 });
+
+                return;
             }
+
+            dispatcher.Enqueue(() => viewModel.CurrentGuess = string.Empty);
         }
-        catch (Exception)
+        catch (Exception exe)
         {
+            logger.LogError(exe, $"Exception thrown inside {nameof(SubmitOnClick)}");
             throw;
         }
         finally

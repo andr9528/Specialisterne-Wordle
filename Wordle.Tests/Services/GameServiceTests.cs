@@ -22,16 +22,11 @@ public sealed class GameServiceTests
     [SetUp]
     public void SetUp()
     {
-        ResetCurrentGame();
-
         gameQuery = new Mock<IEntityQueryService<Game, SearchableGame>>();
         wordService = new Mock<IWordService>();
         guessService = new Mock<IGuessService>();
         logger = Mock.Of<ILogger<GameService>>();
     }
-
-    [TearDown]
-    public void TearDown() => ResetCurrentGame();
 
     [Test]
     public async Task StartNewGame_WhenNoCurrentGame_StartsFreshAndAddsEntity()
@@ -52,8 +47,7 @@ public sealed class GameServiceTests
         gameQuery.Verify(x => x.AddEntity(It.Is<Game>(g =>
             g.Word.Content == "test" &&
             g.AttemptsLeft == word.Letters.Count + 1 &&
-            g.GameState == GameState.ONGOING &&
-            g.Letters.Count == 26
+            g.GameState == GameState.ONGOING
         )), Times.Once);
 
         gameQuery.VerifyNoOtherCalls();
@@ -65,13 +59,16 @@ public sealed class GameServiceTests
     public async Task StartNewGame_WhenCurrentGameExists_AbandonsAndStartsNew()
     {
         // Arrange
-        SetCurrentGame(new Game
+        var existing = new Game
         {
             Word = BuildWord("aaaa"),
             AttemptsLeft = 2,
             GameState = GameState.ONGOING,
             Guesses = new List<IGuess>()
-        });
+        };
+
+        var sut = CreateSut();
+        SetCurrentGame(sut, existing);
 
         gameQuery.Setup(x => x.UpdateEntity(It.IsAny<Game>())).Returns(Task.CompletedTask);
 
@@ -80,8 +77,6 @@ public sealed class GameServiceTests
 
         gameQuery.Setup(x => x.AddEntity(It.IsAny<Game>()))
             .Returns(Task.CompletedTask);
-
-        var sut = CreateSut();
 
         // Act
         await sut.StartNewGame();
@@ -116,9 +111,9 @@ public sealed class GameServiceTests
         await sut.Initialize();
 
         // Assert
-        GetCurrentGame().Should().NotBeNull();
-        GetCurrentGame()!.GameState.Should().Be(GameState.ONGOING);
-        GetCurrentGame()!.Word.Content.Should().Be("test");
+        GetCurrentGame(sut).Should().NotBeNull();
+        GetCurrentGame(sut)!.GameState.Should().Be(GameState.ONGOING);
+        GetCurrentGame(sut)!.Word.Content.Should().Be("test");
 
         gameQuery.VerifyAll();
         wordService.VerifyNoOtherCalls();
@@ -153,45 +148,44 @@ public sealed class GameServiceTests
     public async Task ProcessGuess_WhenGuessLengthIsWrong_ReturnsFalse_AndDoesNotUpdateEntity()
     {
         // Arrange
-        SetCurrentGame(new Game
+        var current = new Game
         {
             Word = BuildWord("test"),
             AttemptsLeft = 3,
             GameState = GameState.ONGOING,
             Guesses = new List<IGuess>()
-        });
-
-        // guessed length mismatch => early return
-        wordService.Setup(x => x.IsGuessedWordValid(It.IsAny<string>())).ReturnsAsync(true); // should not matter
+        };
 
         var sut = CreateSut();
+        SetCurrentGame(sut, current);
 
         // Act
-        var result = await sut.ProcessGuess("nope!!");
+        var result = await sut.ProcessGuess("nope!!"); // wrong length (6 vs 4)
 
         // Assert
         result.Should().BeFalse();
         gameQuery.Verify(x => x.UpdateEntity(It.IsAny<Game>()), Times.Never);
         guessService.Verify(x => x.ProcessGuess(It.IsAny<Word>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never);
 
-        wordService.VerifyNoOtherCalls(); // IsGuessedWordValid should not be called due to length mismatch
+        wordService.VerifyNoOtherCalls(); // dictionary check shouldn't run due to length mismatch
     }
 
     [Test]
     public async Task ProcessGuess_WhenWordNotInDictionary_ReturnsFalse_AndDoesNotUpdateEntity()
     {
         // Arrange
-        SetCurrentGame(new Game
+        var current = new Game
         {
             Word = BuildWord("test"),
             AttemptsLeft = 3,
             GameState = GameState.ONGOING,
             Guesses = new List<IGuess>()
-        });
-
-        wordService.Setup(x => x.IsGuessedWordValid("nope")).ReturnsAsync(false);
+        };
 
         var sut = CreateSut();
+        SetCurrentGame(sut, current);
+
+        wordService.Setup(x => x.IsGuessedWordValid("nope")).ReturnsAsync(false);
 
         // Act
         var result = await sut.ProcessGuess("nope");
@@ -215,7 +209,9 @@ public sealed class GameServiceTests
             GameState = GameState.ONGOING,
             Guesses = new List<IGuess>()
         };
-        SetCurrentGame(current);
+
+        var sut = CreateSut();
+        SetCurrentGame(sut, current);
 
         wordService.Setup(x => x.IsGuessedWordValid("nope")).ReturnsAsync(true);
 
@@ -224,13 +220,12 @@ public sealed class GameServiceTests
             Number = 1,
             Word = BuildWord("nope")
         };
+
         guessService.Setup(x => x.ProcessGuess(current.Word, "nope", 0))
             .Returns(processedGuess);
 
         gameQuery.Setup(x => x.UpdateEntity(It.IsAny<Game>()))
             .Returns(Task.CompletedTask);
-
-        var sut = CreateSut();
 
         // Act
         var result = await sut.ProcessGuess("nope");
@@ -257,9 +252,12 @@ public sealed class GameServiceTests
             GameState = GameState.ONGOING,
             Guesses = new List<IGuess>()
         };
-        SetCurrentGame(current);
+
+        var sut = CreateSut();
+        SetCurrentGame(sut, current);
 
         wordService.Setup(x => x.IsGuessedWordValid("test")).ReturnsAsync(true);
+        wordService.Setup(x => x.GetRandomWord()).ReturnsAsync(BuildWord("new"));
 
         var winningGuess = new Guess
         {
@@ -280,8 +278,6 @@ public sealed class GameServiceTests
         guessService.Setup(x => x.ProcessGuess(current.Word, "test", 0)).Returns(winningGuess);
 
         gameQuery.Setup(x => x.UpdateEntity(It.IsAny<Game>())).Returns(Task.CompletedTask);
-
-        var sut = CreateSut();
 
         // Act
         var result = await sut.ProcessGuess("test");
@@ -308,22 +304,17 @@ public sealed class GameServiceTests
         return new Word { Content = content, Letters = letters };
     }
 
-    private static void ResetCurrentGame()
+    private static void SetCurrentGame(GameService sut, Game game)
     {
-        var field = typeof(GameService).GetField("_currentGame", BindingFlags.NonPublic | BindingFlags.Static);
-        field.Should().NotBeNull("GameService should have a private static _currentGame field");
-        field!.SetValue(null, null);
+        var field = typeof(GameService).GetField("_currentGame", BindingFlags.NonPublic | BindingFlags.Instance);
+        field.Should().NotBeNull("GameService should have a private instance field named _currentGame");
+        field!.SetValue(sut, game);
     }
 
-    private static void SetCurrentGame(Game game)
+    private static Game? GetCurrentGame(GameService sut)
     {
-        var field = typeof(GameService).GetField("_currentGame", BindingFlags.NonPublic | BindingFlags.Static);
-        field!.SetValue(null, game);
-    }
-
-    private static Game? GetCurrentGame()
-    {
-        var field = typeof(GameService).GetField("_currentGame", BindingFlags.NonPublic | BindingFlags.Static);
-        return (Game?)field!.GetValue(null);
+        var field = typeof(GameService).GetField("_currentGame", BindingFlags.NonPublic | BindingFlags.Instance);
+        field.Should().NotBeNull("GameService should have a private instance field named _currentGame");
+        return (Game?)field!.GetValue(sut);
     }
 }

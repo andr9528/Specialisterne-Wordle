@@ -86,11 +86,11 @@ public sealed partial class CharacterIndicatorViewModel : BaseViewModel<Characte
     }
 
     /// <inheritdoc />
-    protected override void OnGameChanged(IGame game)
+    protected override void OnGameChanged(IGame changedGame)
     {
-        base.OnGameChanged(game);
+        base.OnGameChanged(changedGame);
 
-        UpdateKeyboardCharacter(game);
+        UpdateKeyboardCharacter(changedGame);
     }
 
     private void UpdateKeyboardCharacter(IGame game)

@@ -37,10 +37,10 @@ public class ViewModelFactory : IViewModelFactory
     }
 
     /// <inheritdoc />
-    public InformationBarViewModel CreateInformationBarViewModel()
+    public InformationBarViewModel CreateInformationBarViewModel(IGame? currentGame = null)
     {
         var logger = App.Startup.ServiceProvider.GetRequiredService<ILogger<InformationBarViewModel>>();
-        return new InformationBarViewModel(logger, uiDispatcher);
+        return new InformationBarViewModel(logger, uiDispatcher, currentGame);
     }
 
     /// <inheritdoc />

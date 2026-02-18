@@ -13,6 +13,7 @@ public sealed class GamePageRegionUserInterface
     private readonly GamePageRegionLogic logic;
     private readonly GamePageRegionViewModel viewModel;
     private Grid guessHostGrid;
+    private Grid informationHostGrid;
 
     public GamePageRegionUserInterface(GamePageRegionLogic logic, GamePageRegionViewModel viewModel)
     {
@@ -34,8 +35,11 @@ public sealed class GamePageRegionUserInterface
         grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
         grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
 
-        var informationBarViewModel = vmFactory.CreateInformationBarViewModel();
-        var informationBar = new InformationBar(informationBarViewModel).SetRow(0);
+        informationHostGrid = new Grid()
+        {
+            VerticalAlignment = VerticalAlignment.Stretch,
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+        }.SetRow(0);
         guessHostGrid = new Grid()
         {
             VerticalAlignment = VerticalAlignment.Stretch,
@@ -44,12 +48,15 @@ public sealed class GamePageRegionUserInterface
         var keyboardViewModel = vmFactory.CreateKeyboardViewModel(viewModel.CurrentGame);
         var keyboard = new Keyboard(keyboardViewModel).SetRow(2);
 
+        RecreateInformationBar();
         RecreateGuessScrollView();
 
+        logic.BindInformationBarRecreation(RecreateInformationBar);
         logic.BindGuessScrollViewRecreation(RecreateGuessScrollView);
+        informationHostGrid.Unloaded += (_, __) => logic.UnbindInformationBarRecreation();
         guessHostGrid.Unloaded += (_, __) => logic.UnbindGuessScrollViewRecreation();
 
-        grid.Children.Add(informationBar);
+        grid.Children.Add(informationHostGrid);
         grid.Children.Add(guessHostGrid);
         grid.Children.Add(keyboard);
 
@@ -61,4 +68,12 @@ public sealed class GamePageRegionUserInterface
         guessHostGrid.Children.Clear();
         guessHostGrid.Children.Add(new GuessScrollView(viewModel.GuessScrollViewViewModel));
     }
+
+    private void RecreateInformationBar()
+    {
+        informationHostGrid.Children.Clear();
+        informationHostGrid.Children.Add(new InformationBar(viewModel.InformationBarViewModel));
+    }
+
+
 }

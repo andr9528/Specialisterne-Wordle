@@ -16,7 +16,7 @@ public class GameService : IGameService
     private readonly IWordService wordService;
     private readonly IGuessService guessService;
     private readonly ILogger<GameService> logger;
-    private static Game? _currentGame = null;
+    private Game? _currentGame = null;
 
     public GameService(IEntityQueryService<Game, SearchableGame> gameQueryService, IWordService wordService, IGuessService guessService, ILogger<GameService> logger)
     {
@@ -28,7 +28,16 @@ public class GameService : IGameService
 
     public Task StartNewGame()
     {
-        return _currentGame == null ? StartFreshGame() : AbandonCurrentGame();
+        return _currentGame == null || IsCompletedGame(_currentGame) ? StartFreshGame() : AbandonCurrentGame();
+    }
+
+    private bool IsCompletedGame(Game currentGame)
+    {
+        return currentGame.GameState switch
+        {
+            GameState.WON or GameState.LOST => true,
+            _ => false
+        };
     }
 
     /// <inheritdoc />
@@ -52,7 +61,7 @@ public class GameService : IGameService
 
             await gameQueryService.UpdateEntity(_currentGame);
 
-            if (!(_currentGame.GameState is GameState.WON or GameState.LOST))
+            if (!IsCompletedGame(_currentGame))
 
             {
                 _currentGame.Letters = BuildAlphabetLettersFromGuesses(_currentGame);
@@ -80,7 +89,7 @@ public class GameService : IGameService
         else if (_currentGame!.AttemptsLeft <= 0)
             _currentGame.GameState = GameState.LOST;
 
-        if (_currentGame.GameState is GameState.WON or GameState.LOST)
+        if (IsCompletedGame(_currentGame))
             logger.LogInformation("The current game has been '{State}' - the word was '{Word}'.",
                 _currentGame.GameState.ToString().ToLowerInvariant(), _currentGame.Word.Content);
     }

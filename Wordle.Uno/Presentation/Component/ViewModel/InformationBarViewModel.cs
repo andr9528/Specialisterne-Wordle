@@ -7,22 +7,26 @@ namespace Wordle.Uno.Presentation.Component.ViewModel;
 public sealed partial class InformationBarViewModel : BaseViewModel<InformationBarViewModel>
 {
     private readonly IUiDispatcher uiDispatcher;
+    private IGame? game;
     private const string ATTEMPTS_LEFT = "Attempts Left: ";
 
-    public InformationBarViewModel(ILogger<InformationBarViewModel> logger, IUiDispatcher uiDispatcher) : base(logger)
+    public InformationBarViewModel(ILogger<InformationBarViewModel> logger, IUiDispatcher uiDispatcher, IGame? game = null) : base(logger)
     {
         this.uiDispatcher = uiDispatcher;
-        attemptsLeftMessage = ATTEMPTS_LEFT + "Unknown";
+        this.game = game;
+        AttemptsLeftMessage = ATTEMPTS_LEFT + (game == null ? "Unknown" : game.AttemptsLeft.ToString());
     }
 
     [ObservableProperty] private string? attemptsLeftMessage;
 
     /// <inheritdoc />
-    protected override void OnGameChanged(IGame game)
+    protected override void OnGameChanged(IGame changedGame)
     {
-        base.OnGameChanged(game);
+        base.OnGameChanged(changedGame);
 
-        logger.LogDebug("Updating Attempts left to '{GameAttemptsLeft}'.", ATTEMPTS_LEFT + game.AttemptsLeft);
-        uiDispatcher.Enqueue(() => attemptsLeftMessage = ATTEMPTS_LEFT + game.AttemptsLeft);
+        this.game = changedGame;
+
+        logger.LogDebug("Updating Attempts left to '{GameAttemptsLeft}'.", ATTEMPTS_LEFT + changedGame.AttemptsLeft);
+        uiDispatcher.Enqueue(() => AttemptsLeftMessage = ATTEMPTS_LEFT + changedGame.AttemptsLeft);
     }
 }

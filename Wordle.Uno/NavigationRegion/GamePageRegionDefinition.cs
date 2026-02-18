@@ -6,6 +6,7 @@ namespace Wordle.Uno.NavigationRegion;
 public sealed class GamePageRegionDefinition : IPageRegion
 {
     private readonly ILogger<GamePageRegionDefinition> logger;
+    private UIElement? region;
 
     public GamePageRegionDefinition(ILogger<GamePageRegionDefinition> logger)
     {
@@ -19,6 +20,12 @@ public sealed class GamePageRegionDefinition : IPageRegion
     public UIElement CreateControl(IServiceProvider services)
     {
         logger.LogInformation($"Changing page to: {nameof(GamePageRegion)}");
-        return ActivatorUtilities.CreateInstance<GamePageRegion>(services);
+        if (region != null)
+        {
+            return region;
+        }
+
+        region = ActivatorUtilities.CreateInstance<GamePageRegion>(services);
+        return region;
     }
 }

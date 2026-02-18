@@ -146,28 +146,37 @@ public sealed class KeyboardUserInterface
 
 
 
-    private TextBox BuildInputTextBlock()
+    private UIElement BuildInputTextBlock()
     {
+        var hostBorder = new Border
+        {
+            BorderThickness = new Thickness(8),
+            CornerRadius = new CornerRadius(6),
+            Padding = new Thickness(4),
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+        };
+
         var input = new TextBox
         {
             PlaceholderText = "Type your guess…",
-            BorderThickness = new Thickness(12),
+            BorderThickness = new Thickness(0),
             TextAlignment = TextAlignment.Center,
+            Background = new SolidColorBrush(Colors.Transparent),
         };
 
         input.SetBinding(TextBox.TextProperty, new Binding
         {
             Path = nameof(viewModel.CurrentGuess),
             Mode = BindingMode.TwoWay,
-            UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
         });
 
-        input.SetBinding(Control.BorderBrushProperty, new Binding
+        hostBorder.SetBinding(Border.BorderBrushProperty, new Binding
         {
             Path = nameof(viewModel.InputBorderBrush),
-            Mode = BindingMode.OneWay,
+            Mode = BindingMode.TwoWay,
         });
 
-        return input;
+        hostBorder.Child = input;
+        return hostBorder;
     }
 }

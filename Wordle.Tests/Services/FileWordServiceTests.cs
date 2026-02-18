@@ -37,7 +37,7 @@ public sealed class FileWordServiceTests
 
         // Assert
         await act.Should().ThrowAsync<FileNotFoundException>()
-            .WithMessage($"*{path}*");
+            .WithMessage($"*Could not find words file at path*");
     }
 
     [Test]

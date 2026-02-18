@@ -12,6 +12,7 @@ public sealed class GamePageRegionLogic : IDisposable
     private DispatcherQueue dispatcher;
 
     private Action? recreateGuessScrollView;
+    private Action? recreateInformationBar;
 
     public GamePageRegionLogic(GamePageRegion region, GamePageRegionViewModel viewModel, IGameService gameService)
     {
@@ -41,5 +42,26 @@ public sealed class GamePageRegionLogic : IDisposable
         recreateGuessScrollView?.Invoke();
     }
 
-    public void Dispose() => UnbindGuessScrollViewRecreation();
+    public void Dispose()
+    {
+        UnbindInformationBarRecreation();
+        UnbindGuessScrollViewRecreation();
+    }
+
+    public void UnbindInformationBarRecreation()
+    {
+        viewModel.InformationBarViewViewModelChanged -= OnInformationBarViewModelChanged;
+        recreateInformationBar = null;
+    }
+
+    public void BindInformationBarRecreation(Action recreate)
+    {
+        recreateInformationBar = recreate ?? throw new ArgumentNullException(nameof(recreate));
+        viewModel.InformationBarViewViewModelChanged += OnInformationBarViewModelChanged;
+    }
+
+    private void OnInformationBarViewModelChanged()
+    {
+        recreateInformationBar?.Invoke();
+    }
 }

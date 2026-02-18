@@ -48,12 +48,12 @@ public abstract partial class BaseViewModel<TViewModel> : ObservableObject, IRec
     /// <summary>
     /// Override in derived VMs and cherry-pick what you need into primitive properties.
     /// </summary>
-    protected virtual void OnGameChanged(IGame game)
+    protected virtual void OnGameChanged(IGame changedGame)
     {
         logger.LogTrace("{OnEventName} on thread: {ThreadId}, UI access: {HasAccess}", nameof(OnGameChanged),
             Environment.CurrentManagedThreadId, DispatcherQueue.GetForCurrentThread()?.HasThreadAccess);
 
-        if (game == null) throw new ArgumentNullException(nameof(game));
+        if (changedGame == null) throw new ArgumentNullException(nameof(changedGame));
     }
 
     /// <summary>
