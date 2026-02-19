@@ -40,7 +40,7 @@ public sealed class CharacterIndicatorUserInterface
 
         text.SetBinding(TextBlock.TextProperty, new Binding
         {
-            Path = nameof(Uno.Presentation.Component.ViewModel.CharacterIndicatorViewModel.Character),
+            Path = nameof(CharacterIndicatorViewModel.Character),
             Mode = BindingMode.TwoWay,
         });
         return text;
@@ -50,7 +50,7 @@ public sealed class CharacterIndicatorUserInterface
     {
         grid.SetBinding(FrameworkElement.BackgroundProperty, new Binding
         {
-            Path = new PropertyPath(nameof(Uno.Presentation.Component.ViewModel.CharacterIndicatorViewModel.State)),
+            Path = new PropertyPath(nameof(CharacterIndicatorViewModel.State)),
             Mode = BindingMode.TwoWay,
             Converter = new CharacterStateToBrushConverter(),
         });

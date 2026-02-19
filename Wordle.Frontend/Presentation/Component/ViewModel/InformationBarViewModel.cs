@@ -24,7 +24,7 @@ public sealed partial class InformationBarViewModel : BaseViewModel<InformationB
     {
         base.OnGameChanged(changedGame);
 
-        this.game = changedGame;
+        game = changedGame;
 
         logger.LogDebug("Updating Attempts left to '{GameAttemptsLeft}'.", ATTEMPTS_LEFT + changedGame.AttemptsLeft);
         uiDispatcher.Enqueue(() => AttemptsLeftMessage = ATTEMPTS_LEFT + changedGame.AttemptsLeft);

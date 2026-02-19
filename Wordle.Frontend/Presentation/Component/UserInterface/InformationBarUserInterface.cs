@@ -29,7 +29,7 @@ public sealed class InformationBarUserInterface
         };
         message.SetBinding(TextBlock.TextProperty, new Binding
         {
-            Path = nameof(Uno.Presentation.Component.ViewModel.InformationBarViewModel.AttemptsLeftMessage),
+            Path = nameof(InformationBarViewModel.AttemptsLeftMessage),
             Mode = BindingMode.TwoWay,
         });
 

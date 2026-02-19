@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Wordle.Model\Wordle.Model.csproj" />
-    <ProjectReference Include="..\Wordle.Uno\Wordle.Frontend.csproj" />
+    <ProjectReference Include="..\Wordle.Persistence\Wordle.Persistence.csproj" />
+    <ProjectReference Include="..\Wordle.Services\Wordle.Services.csproj" />
   </ItemGroup>
 </Project>

@@ -166,13 +166,13 @@ public sealed class KeyboardUserInterface
 
         input.SetBinding(TextBox.TextProperty, new Binding
         {
-            Path = nameof(Uno.Presentation.Component.ViewModel.KeyboardViewModel.CurrentGuess),
+            Path = nameof(KeyboardViewModel.CurrentGuess),
             Mode = BindingMode.TwoWay,
         });
 
         hostBorder.SetBinding(Border.BorderBrushProperty, new Binding
         {
-            Path = nameof(Uno.Presentation.Component.ViewModel.KeyboardViewModel.InputBorderBrush),
+            Path = nameof(KeyboardViewModel.InputBorderBrush),
             Mode = BindingMode.TwoWay,
         });
 
