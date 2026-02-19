@@ -31,9 +31,9 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.3.1
 
-      - name: Build Wordle.Uno (Debug)
+      - name: Build Wordle.Frontend (Debug)
         shell: pwsh
-        run: msbuild ./Wordle.Uno/Wordle.Uno.csproj /r
+        run: msbuild ./Wordle.Frontend/Wordle.Frontend.csproj /r
 
   unit_test:
     name: Unit Tests
@@ -51,10 +51,10 @@ jobs:
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v1.3.1
 
-      - name: Build Wordle.Uno.Tests (Release)
+      - name: Build Wordle.Tests (Release)
         shell: pwsh
-        run: msbuild ./Wordle.Uno.Tests/Wordle.Uno.Tests.csproj /p:Configuration=Release /p:OverrideTargetFramework=net10.0 /r
+        run: msbuild ./Wordle.Tests/Wordle.Tests.csproj /p:Configuration=Release /p:OverrideTargetFramework=net10.0 /r
 
       - name: Run Unit Tests
         shell: pwsh
-        run: dotnet test ./Wordle.Uno.Tests/Wordle.Uno.Tests.csproj --no-build -c Release --logger GitHubActions --blame-crash --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+        run: dotnet test ./Wordle.Tests/Wordle.Tests.csproj --no-build -c Release --logger GitHubActions --blame-crash --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
