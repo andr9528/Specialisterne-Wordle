@@ -14,7 +14,7 @@
   <Project Path="Wordle.Tests/Wordle.Tests.csproj">
     <Deploy />
   </Project>
-  <Project Path="Wordle.Uno/Wordle.Uno.csproj">
+  <Project Path="Wordle.Frontend/Wordle.Frontend.csproj">
     <Deploy />
   </Project>
 </Solution>

@@ -1,0 +1,24 @@
+using Wordle.Frontend.Presentation.Component.Logic;
+using Wordle.Frontend.Presentation.Component.UserInterface;
+using Wordle.Frontend.Presentation.Component.ViewModel;
+
+namespace Wordle.Frontend.Presentation.Component;
+
+/// <summary>
+/// Displays information such as status messages, attempt count, etc.
+/// </summary>
+public sealed class InformationBar : Border
+{
+    public InformationBar(InformationBarViewModel viewModel)
+    {
+        DataContext = ViewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
+
+        Logic = new InformationBarLogic(ViewModel);
+        var ui = new InformationBarUserInterface(Logic, ViewModel);
+
+        Child = ui.CreateContent();
+    }
+
+    public InformationBarViewModel ViewModel { get; }
+    public InformationBarLogic Logic { get; }
+}
