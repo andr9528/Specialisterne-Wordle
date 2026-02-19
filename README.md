@@ -76,7 +76,7 @@ The solution is structured into separate projects:
 - `Wordle.Model`
 - `Wordle.Persistence`
 - `Wordle.Services`
-- `Wordle.Uno`
+- `Wordle.Frontend`
 - `Wordle.Tests`
 
 The project follows:
@@ -101,5 +101,5 @@ The project follows:
 
 ```bash
 dotnet build
-dotnet run --project Wordle.Uno
+dotnet run --project Wordle.Frontend
 ```

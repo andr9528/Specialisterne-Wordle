@@ -1,7 +1,7 @@
 using Uno.UI.Hosting;
 using Wordle.Frontend;
 
-namespace Wordle.Uno;
+namespace Wordle.Frontend;
 
 internal class Program
 {
