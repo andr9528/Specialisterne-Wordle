@@ -16,7 +16,7 @@ This project was developed as part of the *Specialisterne Academy* and demonstra
 
 2. Download the file:
 
- `Wordle.Uno.exe`
+ `Wordle.Frontend.exe`
  
 3. Double-click the `.exe` file to launch the game.
 
