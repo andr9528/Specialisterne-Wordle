@@ -12,7 +12,7 @@ This project was developed as part of the *Specialisterne Academy* and demonstra
 
 1. Download the latest release from:
 
-   👉 https://github.com/andr9528/Specialisterne-Wordle/releases/tag/v1.0
+   👉 https://github.com/andr9528/Specialisterne-Wordle/releases
 
 2. Download the file:
 
