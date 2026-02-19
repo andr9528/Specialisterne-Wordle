@@ -7,27 +7,50 @@ namespace Wordle.Services;
 
 public class FileWordService : BaseWordService<FileWordService>
 {
-    private readonly string filePath;
+    private const string EMBEDDED_WORD_LIST_NAME = "Wordle.Services.Assets.wordle_ord.txt";
 
-    public FileWordService(ILogger<FileWordService> logger, string filePath = "Assets/wordle_ord.txt") : base(logger)
+    public FileWordService(ILogger<FileWordService> logger) : base(logger)
     {
-        this.filePath = filePath;
     }
 
     protected override async Task<IList<string>> LoadWords()
     {
-        if (!File.Exists(filePath))
-            throw new FileNotFoundException($"Could not find words file at path: {filePath}");
+        var asm = typeof(FileWordService).Assembly;
 
-        logger.LogInformation("Loading words from file at '{FilePath}'.", filePath);
-        var lines = await File.ReadAllLinesAsync(filePath);
+        await using var stream = asm.GetManifestResourceStream(EMBEDDED_WORD_LIST_NAME);
+        if (stream is null)
+        {
+            var available = string.Join(Environment.NewLine, asm.GetManifestResourceNames());
+            throw new FileNotFoundException(
+                $"Embedded resource '{EMBEDDED_WORD_LIST_NAME}' not found. Available resources:\n{available}");
+        }
 
-        var filteredLines = lines.Where(line => !string.IsNullOrWhiteSpace(line)).Skip(1).Select(line => line.Trim())
+        logger.LogInformation("Loading words from embedded file");
+
+        var words = await ReadRawWords(stream);
+        var cleanedWords = words.Where(line => !string.IsNullOrWhiteSpace(line)).Skip(1).Select(line => line.Trim())
             .ToList();
 
-        logger.LogInformation($"Loaded {filteredLines.Count} words into cache.");
+        logger.LogInformation($"Loaded {cleanedWords.Count} words into cache.");
 
-        return filteredLines;
+        return cleanedWords;
+    }
+
+    private async Task<List<string>> ReadRawWords(Stream stream)
+    {
+        using var reader = new StreamReader(stream);
+        var words = new List<string>();
+        while (!reader.EndOfStream)
+        {
+            var line = await reader.ReadLineAsync().ConfigureAwait(false);
+            if (string.IsNullOrWhiteSpace(line))
+                continue;
+
+            var word = line.Trim();
+            words.Add(word);
+        }
+
+        return words;
     }
 }
 
