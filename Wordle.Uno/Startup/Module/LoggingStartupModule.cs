@@ -1,6 +1,7 @@
 using Serilog;
 using Serilog.Events;
 using Wordle.Uno.Startup.Core;
+using Path = System.IO.Path;
 
 namespace Wordle.Uno.Startup.Module;
 
@@ -9,11 +10,12 @@ public class LoggingStartupModule : IStartupModule
     private const string LOG_PATTERN =
         "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u}] [{SourceContext}] {Message}{NewLine}{Exception}";
 
-    private readonly string logPath;
+    private readonly string logDirectory;
 
-    public LoggingStartupModule(string logPath)
+    public LoggingStartupModule(string sharedRootFolderName = "FangSoftware", string appFolderName = "Wordle.Uno")
     {
-        this.logPath = logPath;
+        logDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            sharedRootFolderName, appFolderName, "Logs");
     }
 
     /// <inheritdoc />
@@ -54,6 +56,8 @@ public class LoggingStartupModule : IStartupModule
 #if DEBUG
         level = LogEventLevel.Debug;
 #endif
+
+        var logPath = Path.Combine(logDirectory, "log-.log");
 
         configuration = configuration.WriteTo.Console(outputTemplate: LOG_PATTERN);
         configuration = configuration.WriteTo.File(logPath, outputTemplate: LOG_PATTERN, shared: true,

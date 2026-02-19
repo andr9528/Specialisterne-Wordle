@@ -21,7 +21,6 @@ namespace Wordle.Uno;
 
 public class UnoStartup : ModularStartup
 {
-    private const string LOG_FILE = "Assets/wordle.log";
     private const string APP_SETTINGS_FILE = "appsettings.json";
 
     public UnoStartup()
@@ -29,8 +28,7 @@ public class UnoStartup : ModularStartup
         string basePath = AppContext.BaseDirectory;
         string dbPath = Path.Combine(basePath, WordleDatabaseContext.CONNECTION_STRING);
 
-        AddModule(new LoggingStartupModule(LOG_FILE));
-
+        AddModule(new LoggingStartupModule());
         AddModule(new DatabaseContextStartupModule<WordleDatabaseContext>(options =>
             options.UseSqlite($"Data Source={dbPath}")));
 
