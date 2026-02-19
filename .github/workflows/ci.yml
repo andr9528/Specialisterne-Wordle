@@ -16,7 +16,7 @@ env:
 
 jobs:
   smoke_test:
-    name: Smoke Test (Debug Build of Wordle.Uno)
+    name: Smoke Test (Debug Build of Wordle.Frontend)
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v3
