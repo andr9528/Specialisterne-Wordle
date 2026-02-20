@@ -79,14 +79,6 @@ The solution is structured into separate projects:
 - `Wordle.Frontend`
 - `Wordle.Tests`
 
-The project follows:
-
-- SOLID principles
-- Dependency Injection
-- ViewModel-driven UI
-- EF Core persistence
-- Unit testing (NUnit + FluentAssertions + Moq)
-
 ```mermaid
 graph TD
 
@@ -109,6 +101,14 @@ Tests --> Persistence
 Tests --> Services
 ```
 
+The project follows:
+
+- SOLID principles
+- Dependency Injection
+- ViewModel-driven UI
+- EF Core persistence
+- Unit testing (NUnit + FluentAssertions + Moq)
+
 ---
 
 ## 🧪 Running From Source
@@ -125,3 +125,26 @@ Tests --> Services
 dotnet build
 dotnet run --project Wordle.Frontend
 ```
+
+## 📝 TODO
+
+Planned improvements:
+
+- ⌨️ Allow pressing **Enter** to submit guess (instead of requiring mouse click)
+- 🔁 Add **"Abandon Game"** button to manually start a new game
+- 📚 Complete the **History Page**
+  - Show previous games
+  - Allow resuming abandoned games
+- 🏆 Add visual indicator showing whether the last completed game was won or lost
+
+---
+
+## 📌 Future Improvements
+
+Potential enhancements:
+
+- On-screen win/loss indicator (instead of only logging)
+- Improved UI animations
+- Enhanced keyboard UX
+- Statistics tracking
+- Dark/Light theme toggle
