@@ -87,6 +87,28 @@ The project follows:
 - EF Core persistence
 - Unit testing (NUnit + FluentAssertions + Moq)
 
+```mermaid
+graph TD
+
+Frontend --> Model
+Frontend --> Abstraction
+Frontend --> Persistence
+Frontend --> Services
+
+Services --> Model
+Services --> Abstraction
+
+Persistence --> Model
+Persistence --> Abstraction
+
+Model --> Abstraction
+
+Tests --> Model
+Tests --> Abstraction
+Tests --> Persistence
+Tests --> Services
+```
+
 ---
 
 ## 🧪 Running From Source
