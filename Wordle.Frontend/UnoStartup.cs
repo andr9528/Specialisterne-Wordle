@@ -21,7 +21,6 @@ namespace Wordle.Frontend;
 public class UnoStartup : ModularStartup
 {
     private const string APP_SETTINGS_FILE = "appsettings.json";
-
     public UnoStartup()
     {
         string basePath = AppContext.BaseDirectory;
